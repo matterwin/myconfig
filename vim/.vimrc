@@ -1,4 +1,14 @@
 " --------------------------------------- "
+" Installs
+
+" To install Vim with GTK3 on a new machine, run these commands:
+" sudo add-apt-repository ppa:jonathonf/vim
+" sudo apt update
+" sudo apt install vim-gtk3
+
+
+
+" --------------------------------------- "
 " Plugins "
 
 " NERDTree configuration "
@@ -31,6 +41,29 @@ set number
 
 syntax on
 set mouse=a
+
+" Visuals "
+set ruler
+set laststatus=2
+
+" Define Highlight Groups
+hi User1 ctermfg=Yellow
+hi User2 ctermfg=Red
+hi User3 ctermfg=Magenta
+hi User4 ctermfg=Green
+hi User5 ctermfg=Yellow
+
+" Set up Statusline with Colors
+set statusline=
+set statusline+=%1*%#User1#\ %n\ %*             " buffer number with User1 color
+set statusline+=%5*%#User2#%{&ff}%*             " file format with User2 color
+set statusline+=%3*%#User3#%y%*                 " file type with User3 color
+set statusline+=%4*\ %<%F%*                     " full path
+set statusline+=%2*%#User4#%m%*                 " modified flag with User4 color
+set statusline+=%1*%=%3l/%L\ (%p%%)%*           " current line / total lines, percentage
+set statusline+=%2*%#User5#%4v\ %*              " virtual column number with User5 color
+set statusline+=%2*0x%04B\ %*                   " character under cursor
+
 
 " Map Ctrl+s to save the file
 nnoremap <C-s> :w<CR>
@@ -114,3 +147,4 @@ inoremap <C-h> <Left>
 inoremap <C-j> <Down>
 inoremap <C-k> <Up>
 inoremap <C-l> <Right>
+
