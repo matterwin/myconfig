@@ -7,6 +7,7 @@ if !isdirectory(expand('~/.vim/pack/plugins/start/nerdtree'))
   silent !git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/plugins/start/nerdtree
 endif
 
+let NERDTreeShowHidden=1
 map <C-n> :NERDTreeToggle<CR>
 " Map Tab to go to the next tab
 map <Tab> :tabnext<CR>
