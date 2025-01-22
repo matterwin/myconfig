@@ -26,11 +26,19 @@ map <Tab> :tabnext<CR>
 " Map Shift+Tab to go to the previous tab
 map <S-Tab> :tabprevious<CR>
 autocmd VimLeave * NERDTreeClose
+" Open file in a new tab
+autocmd FileType nerdtree nnoremap <silent> t :NERDTreeFind<CR>
+
+
+let NERDTreeMapOpenInTab='\r'
+let NERDTreeCustomOpenArgs={'file':{'where': 't'}}
 
 
 
-" Powerline statusbar "
-" Check if Powerline is installed, if not, clone it
+
+" Powerline statusbar setup
+" Check if Powerline is installed, if not, clone it and install dependencies
+
 if !isdirectory(expand('~/.vim/pack/plugins/start/powerline'))
   " Print message to indicate that Powerline is being installed
   echo "Installing Powerline..."
@@ -38,9 +46,21 @@ if !isdirectory(expand('~/.vim/pack/plugins/start/powerline'))
   " Clone Powerline from GitHub
   silent !git clone https://github.com/powerline/powerline.git ~/.vim/pack/plugins/start/powerline
 
+  " Check if pip is installed
+  silent !which pip3 > /dev/null || echo "Installing pip..."
+
+  " Install pip if not installed (for Python 3)
+  silent !curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+  silent !python3 get-pip.py
+  silent !rm get-pip.py
+
+  " Install powerline-status using pip
+  silent !pip3 install powerline-status
+
   " Optional: Confirm installation completion
   echo "Powerline installation complete."
 endif
+
 
 if has('python3')
     python3 from powerline.vim import setup
@@ -49,6 +69,27 @@ endif
 set rtp+=~/.vim/pack/plugins/start/powerline
 set laststatus=2
 let g:powerline_colorscheme = 'solarized'
+
+
+
+" vim-tmux-navigator configuration "
+" Check if vim-tmux-navigator is installed, if not, clone it"
+" if !isdirectory(expand('~/.vim/pack/plugins/start/vim-tmux-navigator'))
+"    echo "Installing vim-tmux-navigator..."
+"    silent !git clone https://github.com/christoomey/vim-tmux-navigator.git ~/.vim/pack/plugins/start/vim-tmux-navigator
+"    echo "vim-tmux-navigator installation complete."
+" endif
+
+" Configure tmux navigator keybindings"
+let g:tmux_navigator_no_mappings = 1
+nnoremap <C-h> :TmuxNavigateLeft<CR>
+nnoremap <C-j> :TmuxNavigateDown<CR>
+nnoremap <C-k> :TmuxNavigateUp<CR>
+nnoremap <C-l> :TmuxNavigateRight<CR>
+
+
+
+
 
 
 
@@ -90,7 +131,7 @@ set ruler
 " set statusline+=%1*%=%3l/%L\ (%p%%)%*           " current line / total lines, percentage
 " set statusline+=%2*%#User5#%4v\ %*              " virtual column number with User5 color
 " set statusline+=%2*0x%04B\ %*                   " character under cursor
-
+ 
 " Map Ctrl+s to save the file
 nnoremap <C-s> :w<CR>
 
@@ -100,6 +141,20 @@ nnoremap <C-s> :w<CR>
 " window "
 set splitbelow
 set splitright
+set noswapfile
+
+" I use tmux now
+" Map Ctrl+h/j/k/l to move between windows
+" nnoremap <C-h> <C-w>h
+" nnoremap <C-j> <C-w>j
+" nnoremap <C-k> <C-w>k
+" nnoremap <C-l> <C-w>l
+
+" Map Ctrl+h/j/k/l to move between windows in terminal mode
+" tnoremap <C-h> <C-w>h
+" tnoremap <C-j> <C-w>j
+" tnoremap <C-k> <C-w>k
+" tnoremap <C-l> <C-w>l
 
 " Terminal"
 nnoremap <leader>t :below term<CR>
@@ -108,22 +163,12 @@ nnoremap <leader>g :above term<CR>
 
 " Exit terminal mode to traverse like in vim "
 tnoremap <Esc><Esc> <C-\><C-n>
+tnoremap <ScrollWheelUp> <C-\><C-n>
+tnoremap <ScrollWheelDown> <C-\><C-n>
 autocmd TerminalOpen * setlocal nonumber norelativenumber laststatus=0
 
 
 nnoremap <C-q><C-q> :q<CR>
-
-" Map Ctrl+h/j/k/l to move between windows
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
-
-" Map Ctrl+h/j/k/l to move between windows in terminal mode
-tnoremap <C-h> <C-w>h
-tnoremap <C-j> <C-w>j
-tnoremap <C-k> <C-w>k
-tnoremap <C-l> <C-w>l
 
 nnoremap <leader>h :split<CR>
 nnoremap <leader>j :vsplit<CR>
@@ -181,8 +226,10 @@ endfunction
 nnoremap <leader>/ :call CommentLine()<CR>
 vnoremap <leader>/ :call CommentLine()<CR>
 
-inoremap <C-h> <Left>
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
-inoremap <C-l> <Right>
+" inoremap <C-h> <Left>
+" inoremap <C-j> <Down>
+" inoremap <C-k> <Up>
+" inoremap <C-l> <Right>
+
+nnoremap 9 $
 
