@@ -7,80 +7,43 @@
 " sudo apt install vim-gtk3
 
 
+" Plugins --------------------------------------- "
 
-" --------------------------------------- "
-" Plugins "
-
-" NERDTree configuration "
-" Check if NERDTree is installed, if not, clone it
-if !isdirectory(expand('~/.vim/pack/plugins/start/nerdtree'))
-    echo "Installing NERDTree..."
-    silent !git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/plugins/start/nerdtree
-    echo "NERDTree installation complete."
-endif
-
-let NERDTreeShowHidden=1
-map <C-n> :NERDTreeToggle<CR>
-" Map Tab to go to the next tab
-map <Tab> :tabnext<CR>
-" Map Shift+Tab to go to the previous tab
-map <S-Tab> :tabprevious<CR>
-autocmd VimLeave * NERDTreeClose
-" Open file in a new tab
-autocmd FileType nerdtree nnoremap <silent> t :NERDTreeFind<CR>
+" PlugInstall --------------------
+call plug#begin('~/.vim/plugged')
+Plug 'powerline/powerline'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'preservim/nerdtree'
+Plug 'justinmk/vim-sneak'
+Plug 'tpope/vim-commentary'
+call plug#end()
 
 
-let NERDTreeMapOpenInTab='\r'
-let NERDTreeCustomOpenArgs={'file':{'where': 't'}}
-
-
-
-
-" Powerline statusbar setup
-" Check if Powerline is installed, if not, clone it and install dependencies
-
-if !isdirectory(expand('~/.vim/pack/plugins/start/powerline'))
-  " Print message to indicate that Powerline is being installed
-  echo "Installing Powerline..."
-
-  " Clone Powerline from GitHub
-  silent !git clone https://github.com/powerline/powerline.git ~/.vim/pack/plugins/start/powerline
-
-  " Check if pip is installed
-  silent !which pip3 > /dev/null || echo "Installing pip..."
-
-  " Install pip if not installed (for Python 3)
-  silent !curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-  silent !python3 get-pip.py
-  silent !rm get-pip.py
-
-  " Install powerline-status using pip
-  silent !pip3 install powerline-status
-
-  " Optional: Confirm installation completion
-  echo "Powerline installation complete."
-endif
-
-
+" Powerline settings
 if has('python3')
     python3 from powerline.vim import setup
     python3 setup()
+else
+    echo "Powerline requires Python 3. Please install Python 3."
 endif
 set rtp+=~/.vim/pack/plugins/start/powerline
 set laststatus=2
-let g:powerline_colorscheme = 'solarized'
+
+" fzf
+" Keybinding for fuzzy file search
+nnoremap <C-p> :Files<CR>
+" Keybinding for searching lines within the current buffer
+nnoremap <C-f> :Lines<CR>
+" Fuzzy buffer search with Ctrl+b
+nnoremap <C-b> :Buffers<CR>
+let g:fzf_layout = { 'down': '40%' }
 
 
 
-" vim-tmux-navigator configuration "
-" Check if vim-tmux-navigator is installed, if not, clone it"
-" if !isdirectory(expand('~/.vim/pack/plugins/start/vim-tmux-navigator'))
-"    echo "Installing vim-tmux-navigator..."
-"    silent !git clone https://github.com/christoomey/vim-tmux-navigator.git ~/.vim/pack/plugins/start/vim-tmux-navigator
-"    echo "vim-tmux-navigator installation complete."
-" endif
 
-" Configure tmux navigator keybindings"
+" vim-tmux-navigator configuration
 let g:tmux_navigator_no_mappings = 1
 nnoremap <C-h> :TmuxNavigateLeft<CR>
 nnoremap <C-j> :TmuxNavigateDown<CR>
@@ -90,15 +53,27 @@ nnoremap <C-l> :TmuxNavigateRight<CR>
 
 
 
+" vim-sneak
+let g:sneak#label = 1
 
 
 
-" Clipboard "
-set clipboard=unnamedplus
+" vim-commentary
+filetype plugin indent on
+nnoremap <C-/> gcc
+" nnoremap <C-/> gc
+" vnoremap <C-/> gcc
+" vnoremap <C-/> gc
 
 
+" nerdtree
+let NERDTreeShowHidden=1
+map <C-n> :NERDTreeToggle<CR>
 
-" --------------------------------------- "
+
+" --------------------------------
+
+
 " MAPPINGS AND SETTINGS VIM"
 let mapleader = " "
 
@@ -107,6 +82,11 @@ set number
 
 syntax on
 set mouse=a
+
+" Go to next tab
+nnoremap <Tab> :tabnext<CR>
+" Go to previous tab
+nnoremap <S-Tab> :tabprevious<CR>
 
 " Visuals "
 set fillchars=eob:\ 
@@ -119,6 +99,9 @@ set fillchars=eob:\
 " hi User5 ctermfg=Yellow
 " hi StatusLine ctermbg=8 ctermfg=darkblue
 " hi StatusLineNC ctermbg=8 ctermfg=Grey
+
+" Clipboard "
+set clipboard=unnamedplus
 
 set ruler
 " Set up Statusline with Colors
@@ -189,13 +172,7 @@ set shiftwidth=4
 set softtabstop=4 
 
 
-" Shift lines up and down in normal mode
-nnoremap <S-k> :move .-2<CR>
-nnoremap <S-j> :move .+1<CR>
 
-" Shift lines left and right in normal mode
-nnoremap <S-h> <<
-nnoremap <S-l> >>
 
 " Shift lines up and down in visual mode (selected lines)
 vnoremap <S-k> :move '<-2<CR>gv
