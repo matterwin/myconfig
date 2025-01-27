@@ -8,6 +8,22 @@
 
 
 " Plugins --------------------------------------- "
+"
+" Must have plugins
+" Plug 'christoomey/vim-tmux-navigator'
+" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+" Plug 'junegunn/fzf.vim'
+" Plug 'rking/ag.vim'
+" Plug 'farmergreg/vim-lastplace'
+
+" Lsp plugins
+" Plug 'prabirshrestha/vim-lsp'
+" Plug 'mattn/vim-lsp-settings'
+" Plug 'prabirshrestha/asyncomplete.vim'
+" Plug 'prabirshrestha/asyncomplete-lsp.vim'
+
+
+
 
 " PlugInstall --------------------
 call plug#begin('~/.vim/plugged')
@@ -18,7 +34,52 @@ Plug 'junegunn/fzf.vim'
 Plug 'preservim/nerdtree'
 Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-commentary'
+Plug 'rking/ag.vim'
+Plug 'farmergreg/vim-lastplace'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+
+" Lsp plugins
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
 call plug#end()
+" ---------------------------------
+
+" Vim Lsp:
+filetype plugin on
+" copied (almost) directly from the vim-lsp docs:
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled (set the lsp shortcuts) when an lsp server
+    " is registered for a buffer.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+" Keybindings for LSP features
+nnoremap gd :LspDefinition<CR>
+nnoremap K :LspHover<CR>
+nnoremap gr :LspReferences<CR>
+nnoremap <leader>rn :LspRename<CR>
+nnoremap <leader>e :LspDiagnostic<CR>
+nnoremap <leader>f :LspFormat<CR>
+nnoremap ]d :LspDiagnosticNext<CR>
+nnoremap [d :LspDiagnosticPrev<CR>
+let g:lsp_diagnostics_enabled = 0
+let g:lsp_signs_enabled = 0
+set signcolumn=no
+set foldcolumn=0
+
+
+
 
 
 " Powerline settings
@@ -28,8 +89,18 @@ if has('python3')
 else
     echo "Powerline requires Python 3. Please install Python 3."
 endif
+" let g:Powerline_theme='short'
+" let g:Powerline_colorscheme='solarized256_dark'
+let g:gruvbox_contrast_light = 'soft'   " for light version
+let g:gruvbox_statusline = 1  " Enable better integration for statusline
+let g:powerline_theme = 'catppuccin-frappe'
+let g:Powerline_symbols = 'fancy'
+
 set rtp+=~/.vim/pack/plugins/start/powerline
 set laststatus=2
+
+
+
 
 " fzf
 " Keybinding for fuzzy file search
@@ -38,7 +109,9 @@ nnoremap <C-p> :Files<CR>
 nnoremap <C-f> :Lines<CR>
 " Fuzzy buffer search with Ctrl+b
 nnoremap <C-b> :Buffers<CR>
-let g:fzf_layout = { 'down': '40%' }
+let g:fzf_layout = { 'down': '60%' }
+command! -bang -nargs=* Tags
+    \ call fzf#vim#tags('', fzf#vim#with_preview(), <bang>0)
 
 
 
@@ -51,11 +124,13 @@ nnoremap <C-k> :TmuxNavigateUp<CR>
 nnoremap <C-l> :TmuxNavigateRight<CR>
 
 
-
-
 " vim-sneak
 let g:sneak#label = 1
 
+
+" ag.vim
+" Used to searching for words in files fast
+nnoremap <C-g> :Ag<CR>
 
 
 " vim-commentary
@@ -82,31 +157,42 @@ set number
 
 syntax on
 set mouse=a
+highlight Visual guifg=#FFFFFF guibg=#111111
 
 " Go to next tab
 nnoremap <Tab> :tabnext<CR>
 " Go to previous tab
 nnoremap <S-Tab> :tabprevious<CR>
+nnoremap <C-w> :bprev<CR>
+nnoremap <C-e> :bprev<CR>
 
 " Visuals "
-set fillchars=eob:\ 
+" set fillchars=eob:\ 
+hi MatchParen cterm=bold ctermbg=none ctermfg=yellow
 
 " Define Highlight Groups
-" hi User1 ctermfg=Yellow
+" hi User1 ctermfg=White
 " hi User2 ctermfg=Red
 " hi User3 ctermfg=Magenta
 " hi User4 ctermfg=Green
 " hi User5 ctermfg=Yellow
-" hi StatusLine ctermbg=8 ctermfg=darkblue
-" hi StatusLineNC ctermbg=8 ctermfg=Grey
+" hi StatusLine ctermbg=8 ctermfg=DarkRed
+" hi StatusLineNC ctermbg=8 ctermfg=Red
+
+" function! GitBranch()
+"   let branch = system('git rev-parse --abbrev-ref HEAD')
+"   return substitute(branch, '\n', '', 'g')
+" endfunction
+
+" Add the branch name to the statusline
 
 " Clipboard "
 set clipboard=unnamedplus
 
-set ruler
 " Set up Statusline with Colors
 " set statusline=
-" set statusline+=%1*%#User1#\ %n\ %*             " buffer number with User1 color
+" set statusline=%{GitBranch()}%*
+" set statusline+=%3*%#User1#\ %n\ %*             " buffer number with User1 color
 " set statusline+=%5*%#User2#%{&ff}%*             " file format with User2 color
 " set statusline+=%3*%#User3#%y%*                 " file type with User3 color
 " set statusline+=%4*\ %<%F%*                     " full path
@@ -169,9 +255,13 @@ nnoremap <C-Left> :vertical resize -2<CR>
 set expandtab
 set tabstop=4
 set shiftwidth=4
-set softtabstop=4 
-
-
+set softtabstop=4
+set smarttab
+set autoindent
+set smartindent
+set backspace=indent,eol,start
+" set list
+" set listchars=tab:▸\ ,trail:•
 
 
 " Shift lines up and down in visual mode (selected lines)
@@ -209,4 +299,20 @@ vnoremap <leader>/ :call CommentLine()<CR>
 " inoremap <C-l> <Right>
 
 nnoremap 9 $
+
+" set cursorline
+set termguicolors
+syntax on
+
+
+" Optional: Customize the Catppuccin theme settings
+let g:catppuccin_flavour = 'frappe'  " Use the 'frappe' flavour for darker background
+let g:catppuccin_background = 'dark'  " Set the background to dark
+let g:catppuccin_transparent_background = 1  " Disable transparent background
+let g:catppuccin_dim_inactive = 0  " Disable dimming of inactive windows
+let g:catppuccin_no_bold = 1  " Allow bold text
+let g:catppuccin_no_italic = 0  " Allow italic text
+
+
+colorscheme catppuccin
 
