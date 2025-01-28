@@ -82,18 +82,22 @@ set foldcolumn=0
 
 set laststatus=2
 
+
 function! Gitbranch()
   let gitBranch = system('git rev-parse --abbrev-ref HEAD')
-  " Remove any trailing newline characters
+  if v:shell_error != 0
+    return 'Not in a Git repo'
+  endif
   return substitute(gitBranch, '\n$', '', '')
 endfunction
+
 
 "vim-airline
 let g:lightline = {
       \ 'colorscheme': 'jellybeans',
       \ 'active': {
       \   'left': [ [ 'mode', ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'charvaluehex' ] ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
       \ 'right': [ [ 'lineinfo' ],
       \              [ 'percent' ],
       \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ] ]
@@ -276,8 +280,6 @@ set smarttab
 set autoindent
 set smartindent
 set backspace=indent,eol,start
-" set list
-" set listchars=tab:▸\ ,trail:•
 
 
 " Shift lines up and down in visual mode (selected lines)
@@ -307,3 +309,4 @@ let g:catppuccin_no_bold = 1  " Allow bold text
 let g:catppuccin_no_italic = 0  " Allow italic text
 
 colorscheme catppuccin
+
