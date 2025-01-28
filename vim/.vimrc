@@ -15,6 +15,7 @@
 " Plug 'junegunn/fzf.vim'
 " Plug 'rking/ag.vim'
 " Plug 'farmergreg/vim-lastplace'
+" Plug 'preservim/nerdtree'
 
 " Lsp plugins
 " Plug 'prabirshrestha/vim-lsp'
@@ -27,7 +28,6 @@
 
 " PlugInstall --------------------
 call plug#begin('~/.vim/plugged')
-Plug 'powerline/powerline'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -37,6 +37,7 @@ Plug 'tpope/vim-commentary'
 Plug 'rking/ag.vim'
 Plug 'farmergreg/vim-lastplace'
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+Plug 'itchyny/lightline.vim'
 
 " Lsp plugins
 Plug 'prabirshrestha/vim-lsp'
@@ -79,25 +80,44 @@ set signcolumn=no
 set foldcolumn=0
 
 
-
-
-
-" Powerline settings
-if has('python3')
-    python3 from powerline.vim import setup
-    python3 setup()
-else
-    echo "Powerline requires Python 3. Please install Python 3."
-endif
-" let g:Powerline_theme='short'
-" let g:Powerline_colorscheme='solarized256_dark'
-let g:gruvbox_contrast_light = 'soft'   " for light version
-let g:gruvbox_statusline = 1  " Enable better integration for statusline
-let g:powerline_theme = 'catppuccin-frappe'
-let g:Powerline_symbols = 'fancy'
-
-set rtp+=~/.vim/pack/plugins/start/powerline
 set laststatus=2
+
+function! Gitbranch()
+  let gitBranch = system('git rev-parse --abbrev-ref HEAD')
+  " Remove any trailing newline characters
+  return substitute(gitBranch, '\n$', '', '')
+endfunction
+
+"vim-airline
+let g:lightline = {
+      \ 'colorscheme': 'jellybeans',
+      \ 'active': {
+      \   'left': [ [ 'mode', ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'charvaluehex' ] ],
+      \ 'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ] ]
+      \ },
+      \ 'component': {
+      \   'charvaluehex': '0x%B'
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'Gitbranch' 
+      \ },
+      \ }
+
+function! LightlineFilename()
+  return &filetype ==# 'vimfiler' ? vimfiler#get_status_string() :
+        \ &filetype ==# 'unite' ? unite#get_status_string() :
+        \ &filetype ==# 'vimshell' ? vimshell#get_status_string() :
+        \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+endfunction
+
+let g:unite_force_overwrite_statusline = 0
+let g:vimfiler_force_overwrite_statusline = 0
+let g:vimshell_force_overwrite_statusline = 0
+
+
 
 
 
@@ -135,11 +155,7 @@ nnoremap <C-g> :Ag<CR>
 
 " vim-commentary
 filetype plugin indent on
-nnoremap <C-/> gcc
-" nnoremap <C-/> gc
-" vnoremap <C-/> gcc
-" vnoremap <C-/> gc
-
+" gcc
 
 " nerdtree
 let NERDTreeShowHidden=1
@@ -157,14 +173,15 @@ set number
 
 syntax on
 set mouse=a
+set nopaste
 highlight Visual guifg=#FFFFFF guibg=#111111
 
 " Go to next tab
 nnoremap <Tab> :tabnext<CR>
 " Go to previous tab
 nnoremap <S-Tab> :tabprevious<CR>
-nnoremap <C-w> :bprev<CR>
-nnoremap <C-e> :bprev<CR>
+nnoremap < <cmd>bprev<CR>
+nnoremap > <cmd>bprev<CR>
 
 " Visuals "
 " set fillchars=eob:\ 
@@ -234,7 +251,6 @@ nnoremap <leader>g :above term<CR>
 tnoremap <Esc><Esc> <C-\><C-n>
 tnoremap <ScrollWheelUp> <C-\><C-n>
 tnoremap <ScrollWheelDown> <C-\><C-n>
-autocmd TerminalOpen * setlocal nonumber norelativenumber laststatus=0
 
 
 nnoremap <C-q><C-q> :q<CR>
@@ -272,27 +288,6 @@ vnoremap <S-j> :move '>+1<CR>gv
 vnoremap <S-h> <gv
 vnoremap <S-l> >gv
 
-function! CommentLine()
-  if &filetype == 'python' || &filetype == 'bash'
-    execute 'normal! I# '
-  elseif &filetype == 'c' || &filetype == 'cpp' || &filetype == 'java'
-    execute 'normal! I// '
-  elseif &filetype == 'lua'
-    execute 'normal! I-- '
-  elseif &filetype == 'ruby'
-    execute 'normal! I# '
-  elseif &filetype == 'javascript' || &filetype == 'typescript'
-    execute 'normal! I// '
-  elseif &filetype == 'html' || &filetype == 'xml'
-    execute 'normal! <!-- '
-  else
-    echo "Unsupported filetype"
-  endif
-endfunction
-
-nnoremap <leader>/ :call CommentLine()<CR>
-vnoremap <leader>/ :call CommentLine()<CR>
-
 " inoremap <C-h> <Left>
 " inoremap <C-j> <Down>
 " inoremap <C-k> <Up>
@@ -304,15 +299,11 @@ nnoremap 9 $
 set termguicolors
 syntax on
 
-
-" Optional: Customize the Catppuccin theme settings
 let g:catppuccin_flavour = 'frappe'  " Use the 'frappe' flavour for darker background
 let g:catppuccin_background = 'dark'  " Set the background to dark
-let g:catppuccin_transparent_background = 1  " Disable transparent background
-let g:catppuccin_dim_inactive = 0  " Disable dimming of inactive windows
+let g:catppuccin_transparent_background = 0  " Disable transparent background
+let g:catppuccin_dim_inactive = 1  " Disable dimming of inactive windows
 let g:catppuccin_no_bold = 1  " Allow bold text
 let g:catppuccin_no_italic = 0  " Allow italic text
 
-
 colorscheme catppuccin
-
