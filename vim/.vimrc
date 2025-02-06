@@ -38,6 +38,8 @@ Plug 'rking/ag.vim'
 Plug 'farmergreg/vim-lastplace'
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'itchyny/lightline.vim'
+" Plug 'altercation/vim-colors-solarized'
+Plug 'morhetz/gruvbox'
 
 " Lsp plugins
 Plug 'prabirshrestha/vim-lsp'
@@ -94,7 +96,7 @@ endfunction
 
 "vim-airline
 let g:lightline = {
-      \ 'colorscheme': 'jellybeans',
+      \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ [ 'mode', ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
@@ -154,8 +156,10 @@ let g:sneak#label = 1
 
 " ag.vim
 " Used to searching for words in files fast
+" Need this to ag
+" brew install the_silver_searcher
 nnoremap <C-g> :Ag<CR>
-
+nnoremap <C-g> :silent Ag<CR>
 
 " vim-commentary
 filetype plugin indent on
@@ -178,7 +182,7 @@ set number
 syntax on
 set mouse=a
 set nopaste
-highlight Visual guifg=#FFFFFF guibg=#111111
+" highlight Visual guifg=#FFFFFF guibg=#111111
 
 " Go to next tab
 nnoremap <Tab> :tabnext<CR>
@@ -298,15 +302,33 @@ vnoremap <S-l> >gv
 nnoremap 9 $
 
 " set cursorline
-set termguicolors
-syntax on
+" set termguicolors
+" syntax on
 
-let g:catppuccin_flavour = 'frappe'  " Use the 'frappe' flavour for darker background
-let g:catppuccin_background = 'dark'  " Set the background to dark
-let g:catppuccin_transparent_background = 0  " Disable transparent background
-let g:catppuccin_dim_inactive = 1  " Disable dimming of inactive windows
-let g:catppuccin_no_bold = 1  " Allow bold text
-let g:catppuccin_no_italic = 0  " Allow italic text
+" let g:catppuccin_flavour = 'frappe'  " Use the 'frappe' flavour for darker background
+" let g:catppuccin_background = 'dark'  " Set the background to dark
+" let g:catppuccin_transparent_background = 0  " Disable transparent background
+" let g:catppuccin_dim_inactive = 1  " Disable dimming of inactive windows
+" let g:catppuccin_no_bold = 1  " Allow bold text
+" let g:catppuccin_no_italic = 0  " Allow italic text
+" colorscheme catppuccin
 
-colorscheme catppuccin
+syntax enable
+set background=dark
+
+" Enable Gruvbox customizations
+let g:gruvbox_italic=0
+let g:gruvbox_bold=1
+let g:gruvbox_underline=1
+let g:gruvbox_undercurl=1
+let g:gruvbox_invert_selection=0  " Don't invert selection
+let g:gruvbox_transparent_bg=0    " Transparent mode
+let g:gruvbox_contrast_dark="soft"  " Contrast can be 'hard', 'medium', or 'soft'
+
+" Override Gruvbox colors (optional)
+" Example: Change Comment color
+autocmd ColorScheme gruvbox hi Comment ctermfg=gray
+
+colorscheme gruvbox
+
 

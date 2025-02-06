@@ -1,0 +1,19 @@
+# Ignore binary files
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.class
+
+# Ignore node_modules and build artifacts
+node_modules/
+dist/
+build/
+vendor/
+
+# Ignore Vim and editor backups
+*.swp
+*.swo
+*.bak
+
