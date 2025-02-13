@@ -40,6 +40,7 @@ Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'itchyny/lightline.vim'
 " Plug 'altercation/vim-colors-solarized'
 Plug 'morhetz/gruvbox'
+Plug 'itchyny/vim-gitbranch'
 
 " Lsp plugins
 Plug 'prabirshrestha/vim-lsp'
@@ -49,7 +50,7 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 call plug#end()
 " ---------------------------------
 
-" Vim Lsp:
+"" Vim Lsp:
 filetype plugin on
 " copied (almost) directly from the vim-lsp docs:
 function! s:on_lsp_buffer_enabled() abort
@@ -81,24 +82,13 @@ let g:lsp_signs_enabled = 0
 set signcolumn=no
 set foldcolumn=0
 
-
 set laststatus=2
 
-
-function! Gitbranch()
-  let gitBranch = system('git rev-parse --abbrev-ref HEAD')
-  if v:shell_error != 0
-    return 'Not in a Git repo'
-  endif
-  return substitute(gitBranch, '\n$', '', '')
-endfunction
-
-
-"vim-airline
+" lightline.vim
 let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
-      \   'left': [ [ 'mode', ],
+      \ 'left': [ [ 'mode', ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
       \ 'right': [ [ 'lineinfo' ],
       \              [ 'percent' ],
@@ -108,7 +98,8 @@ let g:lightline = {
       \   'charvaluehex': '0x%B'
       \ },
       \ 'component_function': {
-      \   'gitbranch': 'Gitbranch' 
+      \   'gitbranch': 'gitbranch#name',
+      \   'filename': 'LightlineFilename'
       \ },
       \ }
 
@@ -116,7 +107,19 @@ function! LightlineFilename()
   return &filetype ==# 'vimfiler' ? vimfiler#get_status_string() :
         \ &filetype ==# 'unite' ? unite#get_status_string() :
         \ &filetype ==# 'vimshell' ? vimshell#get_status_string() :
-        \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+        \ LightlineTruncatePath(expand('%:p'))
+endfunction
+
+function! LightlineTruncatePath(fullpath)
+  if empty(a:fullpath)
+    return '[No Name]'
+  endif
+
+  " Split path into parts
+  let pathParts = split(a:fullpath, '/')
+
+  " Only trim if there are more than 4 parts
+  return len(pathParts) > 4 ? join(pathParts[-4:], '/') : a:fullpath
 endfunction
 
 let g:unite_force_overwrite_statusline = 0
@@ -124,7 +127,8 @@ let g:vimfiler_force_overwrite_statusline = 0
 let g:vimshell_force_overwrite_statusline = 0
 
 
-
+" Get rid of ^M chars after pasting
+" :%s/\r//g
 
 
 
@@ -180,7 +184,7 @@ set relativenumber
 set number
 
 syntax on
-set mouse=a
+
 set nopaste
 " highlight Visual guifg=#FFFFFF guibg=#111111
 
@@ -193,7 +197,7 @@ nnoremap > <cmd>bprev<CR>
 
 " Visuals "
 " set fillchars=eob:\ 
-hi MatchParen cterm=bold ctermbg=none ctermfg=yellow
+" hi MatchParen cterm=bold ctermbg=none ctermfg=yellow
 
 " Define Highlight Groups
 " hi User1 ctermfg=White
@@ -213,12 +217,14 @@ hi MatchParen cterm=bold ctermbg=none ctermfg=yellow
 
 " Clipboard "
 set clipboard=unnamedplus
+" Gets rid of blackhole copying from pasting
+vnoremap p "_dP
 
 " Set up Statusline with Colors
 " set statusline=
 " set statusline=%{GitBranch()}%*
 " set statusline+=%3*%#User1#\ %n\ %*             " buffer number with User1 color
-" set statusline+=%5*%#User2#%{&ff}%*             " file format with User2 color
+" set statusline+=%5*%#User2#%{&ff}36%*             " file format with User2 color
 " set statusline+=%3*%#User3#%y%*                 " file type with User3 color
 " set statusline+=%4*\ %<%F%*                     " full path
 " set statusline+=%2*%#User4#%m%*                 " modified flag with User4 color
@@ -254,12 +260,10 @@ set noswapfile
 nnoremap <leader>t :below term<CR>
 nnoremap <leader>g :above term<CR>
 
-
 " Exit terminal mode to traverse like in vim "
 tnoremap <Esc><Esc> <C-\><C-n>
 tnoremap <ScrollWheelUp> <C-\><C-n>
 tnoremap <ScrollWheelDown> <C-\><C-n>
-
 
 nnoremap <C-q><C-q> :q<CR>
 
@@ -272,8 +276,8 @@ nnoremap <leader>l :vsplit<CR>
 " Ctrl+arrow keys for window resize "
 nnoremap <C-Up> :resize +2<CR>
 nnoremap <C-Down> :resize -2<CR>
-nnoremap <C-Right> :vertical resize +2<CR>
-nnoremap <C-Left> :vertical resize -2<CR>
+nnoremap <C-Right> :vertical resize -2<CR>
+nnoremap <C-Left> :vertical resize +2<CR>
 
 " Tabs "
 set expandtab
@@ -284,7 +288,6 @@ set smarttab
 set autoindent
 set smartindent
 set backspace=indent,eol,start
-
 
 " Shift lines up and down in visual mode (selected lines)
 vnoremap <S-k> :move '<-2<CR>gv
@@ -325,10 +328,11 @@ let g:gruvbox_invert_selection=0  " Don't invert selection
 let g:gruvbox_transparent_bg=0    " Transparent mode
 let g:gruvbox_contrast_dark="soft"  " Contrast can be 'hard', 'medium', or 'soft'
 
-" Override Gruvbox colors (optional)
-" Example: Change Comment color
 autocmd ColorScheme gruvbox hi Comment ctermfg=gray
 
 colorscheme gruvbox
 
+
+set mouse=a
+" set ttymouse=
 
