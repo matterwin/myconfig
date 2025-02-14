@@ -115,11 +115,10 @@ function! LightlineTruncatePath(fullpath)
     return '[No Name]'
   endif
 
-  " Split path into parts
   let pathParts = split(a:fullpath, '/')
 
-  " Only trim if there are more than 4 parts
-  return len(pathParts) > 4 ? join(pathParts[-4:], '/') : a:fullpath
+  " Only trim if there are more than 2 parts
+  return len(pathParts) > 2 ? join(pathParts[-2:], '/') : a:fullpath
 endfunction
 
 let g:unite_force_overwrite_statusline = 0
@@ -166,7 +165,6 @@ nnoremap <C-g> :Ag<CR>
 nnoremap <C-g> :silent Ag<CR>
 
 " vim-commentary
-filetype plugin indent on
 " gcc
 
 " nerdtree
@@ -280,14 +278,18 @@ nnoremap <C-Right> :vertical resize -2<CR>
 nnoremap <C-Left> :vertical resize +2<CR>
 
 " Tabs "
+filetype on
+filetype plugin indent on
+filetype indent on
+
 set expandtab
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+set shiftwidth=2
+set tabstop=2
+set softtabstop=2
 set smarttab
 set autoindent
 set smartindent
-set backspace=indent,eol,start
+
 
 " Shift lines up and down in visual mode (selected lines)
 vnoremap <S-k> :move '<-2<CR>gv
