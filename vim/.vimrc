@@ -134,14 +134,16 @@ let g:vimshell_force_overwrite_statusline = 0
 " fzf
 " Keybinding for fuzzy file search
 nnoremap <C-p> :Files<CR>
-" Keybinding for searching lines within the current buffer
 nnoremap <C-f> :Lines<CR>
-" Fuzzy buffer search with Ctrl+b
 nnoremap <C-b> :Buffers<CR>
-let g:fzf_layout = { 'down': '60%' }
-command! -bang -nargs=* Tags
-    \ call fzf#vim#tags('', fzf#vim#with_preview(), <bang>0)
+" nnoremap <C-t> :Tags<CR>
 
+let g:fzf_layout = { 'down': '60%' }
+
+" command! -bang -nargs=* Tags
+"     \ call fzf#vim#tags('', fzf#vim#with_preview(), <bang>0)
+
+" ctags -R .
 
 
 
