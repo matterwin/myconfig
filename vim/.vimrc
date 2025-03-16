@@ -308,7 +308,7 @@ vnoremap <S-l> >gv
 
 nnoremap 9 $
 
-" set cursorline
+set cursorline
 " set termguicolors
 " syntax on
 
