@@ -307,6 +307,9 @@ vnoremap <S-l> >gv
 " inoremap <C-l> <Right>
 
 nnoremap 9 $
+nnoremap dd "_dd
+nnoremap d "_d
+vnoremap d "_d
 
 set cursorline
 " set termguicolors
@@ -340,3 +343,11 @@ colorscheme gruvbox
 set mouse=a
 " set ttymouse=
 
+
+" ---------- Helpful vim shortcuts ----------
+
+" g; and g, to move forward and backward through edit locations
+" Ctrl+i and Ctrl+o to move forward and backward through the jump list
+" `` and '' to swap between the last jump list positions
+"
+" zz to move pov in middle of screen
