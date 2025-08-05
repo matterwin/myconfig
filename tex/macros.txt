@@ -1,0 +1,21 @@
+% ---- Your macro goes here ----
+\newcommand{\pbreak}{\vspace{30pt}}
+\newcommand{\ud}[1]{\underline{#1}}
+\newcommand{\ital}[1]{\textit{#1}}
+\newcommand{\fb}[1]{\fbox{#1}}
+\newcommand{\vocab}[1]{\fbox{\textbf{\textit{#1}}}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\mb}{\mathbf}
+\newcommand{\bs}{\boldsymbol}
+\newcommand{\mdef}{\overset{\mathrm{def}}{=}}
+\newcommand{\h}[1]{\textbf{\fbox{#1}}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\tpose}{^{\top}}
+\newcommand{\ident}[1][]{\mathbf{I}_{#1}}
+\newcommand{\breakpage}{\newpage\mbox{}\newpage}
+\newcommand{\defeq}{\overset{\cdot}{=}}
+% ------------------------------
+
+% for 12pt and 10pt math symbols respectively (1st {})
+% \DeclareMathSizes{12}{14}{10}{8}
+\DeclareMathSizes{10}{12}{8}{6}

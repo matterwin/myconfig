@@ -1,3 +1,4 @@
+"source ~/.vimrc
 " --------------------------------------- "
 " Installs
 
@@ -36,11 +37,17 @@ Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-commentary'
 Plug 'rking/ag.vim'
 Plug 'farmergreg/vim-lastplace'
+
+" Aesthetics
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'itchyny/lightline.vim'
 " Plug 'altercation/vim-colors-solarized'
 Plug 'morhetz/gruvbox'
 Plug 'itchyny/vim-gitbranch'
+Plug 'NLKNguyen/papercolor-theme'
+
+" Academic
+Plug 'lervag/vimtex'
 
 " Lsp plugins
 Plug 'prabirshrestha/vim-lsp'
@@ -83,6 +90,21 @@ set signcolumn=no
 set foldcolumn=0
 
 set laststatus=2
+
+set backspace=indent,eol,start
+
+" VimTeX settings
+let g:tex_flavor='latex'
+let g:vimtex_view_method='zathura'
+let g:vimtex_quickfix_mode=0
+set conceallevel=0
+let g:tex_conceal='abdmg'
+let g:vimtex_mappings_enabled = 0
+nnoremap <C-_> :VimtexCompile<CR>
+nnoremap <F6> :VimtexView<CR>
+" sudo apt install texlive-latex-base latexmk zathura zathura-pdf-poppler
+" To compile: latexmk -pdf main.tex or pdflatex main.tex
+" To view pdf: zathura main.pdf & or explorer.exe main.pdf (this is for wsl)
 
 " lightline.vim
 let g:lightline = {
@@ -324,6 +346,8 @@ set cursorline
 " colorscheme catppuccin
 
 syntax enable
+
+" Dark mode -- Gruvbox
 set background=dark
 
 " Enable Gruvbox customizations
@@ -340,14 +364,48 @@ autocmd ColorScheme gruvbox hi Comment ctermfg=gray
 colorscheme gruvbox
 
 
+" Light mode -- PaperColor
+" set background=light
+" set t_Co=256
+" colorscheme PaperColor
+
 set mouse=a
 " set ttymouse=
 
 
 " ---------- Helpful vim shortcuts ----------
 
+" 1. Cursor pointer control
+"
 " g; and g, to move forward and backward through edit locations
 " Ctrl+i and Ctrl+o to move forward and backward through the jump list
 " `` and '' to swap between the last jump list positions
 "
 " zz to move pov in middle of screen
+"
+"
+"
+"
+" 2. Vim Find & Replace Cheat Sheet
+
+" :%s/old/new/g       Replace all occurrences of 'old' with 'new' in entire file
+" :s/old/new/g        Replace all occurrences of 'old' with 'new' in current line
+" :%s/old/new/gi      Replace all occurrences, case-insensitive, entire file
+" :%s/old/new/gc      Replace all occurrences with confirmation prompt
+" :10,20s/old/new/g   Replace between lines 10 and 20
+
+" -- Confirmation in gc mode --
+" y    Yes, replace this match
+" n    No, skip this match
+" a    Replace all remaining without asking
+" q    Quit substitution
+" l    Replace this and quit
+
+" -- Visual mode replace --
+" 1. Select text in visual mode (v)
+" 2. Press ':'
+" 3. Type s/old/new/g and Enter
+
+" -- Useful shortcuts --
+" .    Repeat last substitution command
+

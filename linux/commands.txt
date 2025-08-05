@@ -1,0 +1,10 @@
+# Find a file
+find [starting-directory] [options] [expression]
+
+// Case sensitive
+find . -name "example.txt"
+
+// Non-case sensitive
+find . -iname "example.txt"
+
+Lookup the options online for more details.
