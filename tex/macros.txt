@@ -44,6 +44,12 @@
 }
 \newcommand{\euler}{\mathrm{e}}
 \newcommand{\expect}{\mathbb{E}}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+\newcommand{\ba}{\begin{align*}}
+\newcommand{\al}[1]{\begin{align*}#1\end{align*}}
 % ------------------------------
 
 % for 12pt

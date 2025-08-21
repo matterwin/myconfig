@@ -45,6 +45,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'morhetz/gruvbox'
 Plug 'itchyny/vim-gitbranch'
 Plug 'NLKNguyen/papercolor-theme'
+Plug 'crusoexia/vim-monokai'
 
 " Academic
 Plug 'lervag/vimtex'
@@ -359,10 +360,20 @@ let g:gruvbox_invert_selection=0  " Don't invert selection
 let g:gruvbox_transparent_bg=0    " Transparent mode
 let g:gruvbox_contrast_dark="soft"  " Contrast can be 'hard', 'medium', or 'soft'
 
+" For transparent bg
+" autocmd VimEnter * hi Normal guibg=NONE ctermbg=NONE
+" autocmd VimEnter * hi NormalNC guibg=NONE ctermbg=NONE
+" autocmd VimEnter * hi SignColumn guibg=NONE ctermbg=NONE
+" autocmd VimEnter * hi VertSplit guibg=NONE ctermbg=NONE
+" autocmd VimEnter * hi LineNr guibg=NONE ctermbg=NONE
+" autocmd VimEnter * hi EndOfBuffer guibg=NONE ctermbg=NONE
+
 autocmd ColorScheme gruvbox hi Comment ctermfg=gray
 
 colorscheme gruvbox
 
+" syntax on
+" colorscheme monokai
 
 " Light mode -- PaperColor
 " set background=light
