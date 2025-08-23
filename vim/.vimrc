@@ -101,6 +101,8 @@ let g:vimtex_quickfix_mode=0
 set conceallevel=0
 let g:tex_conceal='abdmg'
 let g:vimtex_mappings_enabled = 0
+let g:vimtex#digestif#enabled = 0
+
 nnoremap <C-_> :VimtexCompile<CR>
 nnoremap <F6> :VimtexView<CR>
 " sudo apt install texlive-latex-base latexmk zathura zathura-pdf-poppler
@@ -215,8 +217,11 @@ set nopaste
 nnoremap <Tab> :tabnext<CR>
 " Go to previous tab
 nnoremap <S-Tab> :tabprevious<CR>
-nnoremap < <cmd>bprev<CR>
-nnoremap > <cmd>bprev<CR>
+" nnoremap < <cmd>bprev<CR>
+" nnoremap > <cmd>bprev<CR>
+"
+nnoremap <C-I> <C-I>
+
 
 " Visuals "
 " set fillchars=eob:\ 
