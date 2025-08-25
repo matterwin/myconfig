@@ -213,15 +213,14 @@ syntax on
 set nopaste
 " highlight Visual guifg=#FFFFFF guibg=#111111
 
-" Go to next tab
-nnoremap <Tab> :tabnext<CR>
-" Go to previous tab
-nnoremap <S-Tab> :tabprevious<CR>
-" nnoremap < <cmd>bprev<CR>
-" nnoremap > <cmd>bprev<CR>
-"
-nnoremap <C-I> <C-I>
+" Tabs
+nnoremap <C-Left>  :tabprevious<CR>
+nnoremap <C-Right> :tabnext<CR>
+nnoremap <Tab> <Nop>
 
+" Buffers (jump list style)
+nnoremap <C-I> <C-I>   " jump forward
+nnoremap <C-O> <C-O>   " jump back
 
 " Visuals "
 " set fillchars=eob:\ 
@@ -300,12 +299,11 @@ nnoremap <leader>j :vsplit<CR>
 nnoremap <leader>k :split<CR>
 nnoremap <leader>l :vsplit<CR>
 
-
-" Ctrl+arrow keys for window resize "
-nnoremap <C-Up> :resize +2<CR>
-nnoremap <C-Down> :resize -2<CR>
-nnoremap <C-Right> :vertical resize -2<CR>
-nnoremap <C-Left> :vertical resize +2<CR>
+" Resize splits with Ctrl + Shift + Arrows
+nnoremap <C-S-Up>    :resize +2<CR>
+nnoremap <C-S-Down>  :resize -2<CR>
+nnoremap <C-S-Right> :vertical resize +2<CR>
+nnoremap <C-S-Left>  :vertical resize -2<CR>
 
 " Tabs "
 filetype on

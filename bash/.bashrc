@@ -1,13 +1,19 @@
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+#
+# ~/.bashrc
+#
 
-alias tmux="TERM=screen-256color-bce tmux"
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
-copyfile() {
-  if [ -z "$1" ]; then
-    echo "Usage: copyfile filename"
-    return 1
-  fi
-  cat "$1" | clip.exe
-}
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+PS1='[\u@\h \W]\$ '
 
-# Add these to bottom of bashrc
+# fastfetch
+
+# PS1='\w\$ '
+# PS1='\[\e[34m\]\w\[\e[0m\]>> '
+PS1='\[\e[38;2;191;85;236m\]\w\[\e[0m\]>> '
+
+
+
