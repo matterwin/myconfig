@@ -50,6 +50,8 @@
 \newcommand{\ee}{\end{enumerate}}
 \newcommand{\ba}{\begin{align*}}
 \newcommand{\al}[1]{\begin{align*}#1\end{align*}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 % ------------------------------
 
 % for 12pt

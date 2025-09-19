@@ -302,8 +302,8 @@ nnoremap <leader>l :vsplit<CR>
 " Resize splits with Ctrl + Shift + Arrows
 nnoremap <C-S-Up>    :resize +2<CR>
 nnoremap <C-S-Down>  :resize -2<CR>
-nnoremap <C-S-Right> :vertical resize +2<CR>
-nnoremap <C-S-Left>  :vertical resize -2<CR>
+nnoremap <C-S-Right> :vertical resize -2<CR>
+nnoremap <C-S-Left>  :vertical resize +2<CR>
 
 " Tabs "
 filetype on
@@ -311,9 +311,9 @@ filetype plugin indent on
 filetype indent on
 
 set expandtab
-set shiftwidth=2
-set tabstop=2
-set softtabstop=2
+set shiftwidth=4
+set tabstop=4
+set softtabstop=4
 set smarttab
 set autoindent
 set smartindent
@@ -334,7 +334,6 @@ vnoremap <S-l> >gv
 
 nnoremap 9 $
 nnoremap dd "_dd
-nnoremap d "_d
 vnoremap d "_d
 
 set cursorline
