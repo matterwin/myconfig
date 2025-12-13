@@ -48,10 +48,11 @@
 \newcommand{\ei}{\end{itemize}}
 \newcommand{\be}{\begin{enumerate}}
 \newcommand{\ee}{\end{enumerate}}
-\newcommand{\ba}{\begin{align*}}
-\newcommand{\al}[1]{\begin{align*}#1\end{align*}}
+\newcommand{\al}[1]{\ensuremath{\begin{aligned}#1\end{aligned}}}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\rightarrowname}[1]{\ensuremath{\xrightarrow{\text{#1}}}}
+\newcommand{\leftarrowname}[1]{\ensuremath{\xleftarrow{\text{#1}}}}
 % ------------------------------
 
 % for 12pt

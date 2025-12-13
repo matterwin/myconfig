@@ -24,9 +24,6 @@
 " Plug 'prabirshrestha/asyncomplete.vim'
 " Plug 'prabirshrestha/asyncomplete-lsp.vim'
 
-
-
-
 " PlugInstall --------------------
 call plug#begin('~/.vim/plugged')
 Plug 'christoomey/vim-tmux-navigator'
@@ -46,6 +43,7 @@ Plug 'morhetz/gruvbox'
 Plug 'itchyny/vim-gitbranch'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'crusoexia/vim-monokai'
+Plug 'Yggdroot/indentLine'
 
 " Academic
 Plug 'lervag/vimtex'
@@ -76,8 +74,35 @@ augroup lsp_install
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
+if executable('rust-analyzer')
+	au User lsp_setup call lsp#register_server({
+		\ 'name': 'rust-analyzer',
+		\ 'cmd': {server_info->['rust-analyzer']},
+		\ 'whitelist': ['rust'],
+	\ })
+endif
+
+if executable('clangd')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd',
+        \ 'cmd': ['clangd', '--header-insertion=never'],
+        \ 'whitelist': ['c', 'cpp'],
+    \ })
+endif
+
+if executable('pylsp')
+    " pip install python-lsp-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pylsp',
+        \ 'cmd': {server_info->['pylsp']},
+        \ 'allowlist': ['python'],
+        \ })
+endif
+
 " Keybindings for LSP features
 nnoremap gd :LspDefinition<CR>
+nnoremap gD :LspDeclaration<CR>
+nnoremap gi <plug>(lsp-implementation)
 nnoremap K :LspHover<CR>
 nnoremap gr :LspReferences<CR>
 nnoremap <leader>rn :LspRename<CR>
@@ -85,14 +110,41 @@ nnoremap <leader>e :LspDiagnostic<CR>
 nnoremap <leader>f :LspFormat<CR>
 nnoremap ]d :LspDiagnosticNext<CR>
 nnoremap [d :LspDiagnosticPrev<CR>
+
 let g:lsp_diagnostics_enabled = 0
 let g:lsp_signs_enabled = 0
 set signcolumn=no
 set foldcolumn=0
 
+function! ToggleLspDiagnostics()
+  if g:lsp_signs_enabled
+    " Hide signs
+    let g:lsp_signs_enabled = 0
+    set signcolumn=no
+    echom "LSP Diagnostics UI OFF"
+    " Clear signs but keep diagnostics running
+    silent! execute('sign unplace * group=lsp')
+  else
+    " Show signs
+    let g:lsp_signs_enabled = 1
+    set signcolumn=yes
+    echom "LSP Diagnostics UI ON"
+    " Refresh diagnostics UI (signs)
+    silent! call lsp#diagnostics#refresh()
+  endif
+endfunction
+
+nnoremap <C-w> :call ToggleLspDiagnostics()<CR>
+
+
+" Aesthetics
+set hlsearch
+
 set laststatus=2
 
 set backspace=indent,eol,start
+
+
 
 " VimTeX settings
 let g:tex_flavor='latex'
@@ -161,6 +213,7 @@ let g:vimshell_force_overwrite_statusline = 0
 nnoremap <C-p> :Files<CR>
 nnoremap <C-f> :Lines<CR>
 nnoremap <C-b> :Buffers<CR>
+nnoremap <C-g> :Ag<CR>
 " nnoremap <C-t> :Tags<CR>
 
 let g:fzf_layout = { 'down': '60%' }
@@ -189,10 +242,23 @@ let g:sneak#label = 1
 " Need this to ag
 " brew install the_silver_searcher
 nnoremap <C-g> :Ag<CR>
-nnoremap <C-g> :silent Ag<CR>
+" nnoremap <C-g> :silent Ag<CR>
+
+" command! -nargs=+ Ag
+"       \ call fzf#vim#grep(
+"       \   'ag --vimgrep --no-heading --smart-case '.shellescape(<q-args>), 1,
+"       \   {'options': '--ansi'}, 0)
+
+" nnoremap <C-g> :call fzf#vim#grep('ag --vimgrep --no-heading --smart-case '.input('Ag: '), 1, {'options':'--ansi'}, 0)<CR>
+
+"Switched from Ag to Rg
+" nnoremap <C-g> :Rg<Space>
+nnoremap <leader>rr :Rg<Space>
+
 
 " vim-commentary
 " gcc
+
 
 " nerdtree
 let NERDTreeShowHidden=1
@@ -309,7 +375,6 @@ nnoremap <C-S-Left>  :vertical resize +2<CR>
 filetype on
 filetype plugin indent on
 filetype indent on
-
 set expandtab
 set shiftwidth=4
 set tabstop=4
@@ -317,7 +382,6 @@ set softtabstop=4
 set smarttab
 set autoindent
 set smartindent
-
 
 " Shift lines up and down in visual mode (selected lines)
 vnoremap <S-k> :move '<-2<CR>gv
@@ -385,6 +449,18 @@ colorscheme gruvbox
 set mouse=a
 " set ttymouse=
 
+" Enable indent lines
+" let g:indentLine_enabled = 1
+
+" Disable indent lines
+let g:indentLine_enabled = 0
+
+" Enable color support
+let g:indentLine_setColors = 1
+
+" let g:indentLine_char = 'c'
+
+
 
 " ---------- Helpful vim shortcuts ----------
 
@@ -422,3 +498,6 @@ set mouse=a
 " -- Useful shortcuts --
 " .    Repeat last substitution command
 
+" Use ce when you want to replace the rest of a word.
+" Use cw when editing mid-word OR editing whitespace.
+" Use ciw when you want to replace the whole word cleanly every time.
