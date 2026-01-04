@@ -35,6 +35,8 @@ Plug 'tpope/vim-commentary'
 Plug 'rking/ag.vim'
 Plug 'farmergreg/vim-lastplace'
 
+Plug 'michaeljsmith/vim-indent-object'
+
 " Aesthetics
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'itchyny/lightline.vim'
@@ -44,6 +46,7 @@ Plug 'itchyny/vim-gitbranch'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'crusoexia/vim-monokai'
 Plug 'Yggdroot/indentLine'
+Plug 'nathanaelkane/vim-indent-guides'
 
 " Academic
 Plug 'lervag/vimtex'
@@ -353,8 +356,8 @@ set noswapfile
 nnoremap <leader>t :below term<CR>
 nnoremap <leader>g :above term<CR>
 
-" Exit terminal mode to traverse like in vim "
-tnoremap <Esc><Esc> <C-\><C-n>
+"ctrl+t - exit terminal
+tnoremap <C-t> <C-\><C-n>
 tnoremap <ScrollWheelUp> <C-\><C-n>
 tnoremap <ScrollWheelDown> <C-\><C-n>
 
@@ -449,18 +452,23 @@ colorscheme gruvbox
 set mouse=a
 " set ttymouse=
 
-" Enable indent lines
-" let g:indentLine_enabled = 1
+" Yggdroot/indentLine
+let g:indentLine_enabled        = 0      " enable indent lines
+let g:indentLine_setColors      = 1      " enable colors
+let g:indentLine_showFirstIndentLevel = 1 " show first indent
 
-" Disable indent lines
-let g:indentLine_enabled = 0
+" nathanaelkane/vim-indent-guides
+" let g:indent_guides_enable_on_vim_startup = 1
+" let g:indent_guides_start_level = 1
+" let g:indent_guides_guide_size = 1
+" let g:indent_guides_draw_blank = 1
+"
 
-" Enable color support
-let g:indentLine_setColors = 1
+nnoremap <leader>tl :colorscheme PaperColor<CR>
+nnoremap <leader>td :colorscheme gruvbox<CR>
 
-" let g:indentLine_char = 'c'
-
-
+nnoremap <leader>bd :set background=dark<CR>
+nnoremap <leader>bl :set background=light<CR>
 
 " ---------- Helpful vim shortcuts ----------
 
@@ -470,13 +478,9 @@ let g:indentLine_setColors = 1
 " Ctrl+i and Ctrl+o to move forward and backward through the jump list
 " `` and '' to swap between the last jump list positions
 "
-" zz to move pov in middle of screen
+" zz - to move pov in middle of screen
+" zt - to move pov in top of screen
 "
-"
-"
-"
-" 2. Vim Find & Replace Cheat Sheet
-
 " :%s/old/new/g       Replace all occurrences of 'old' with 'new' in entire file
 " :s/old/new/g        Replace all occurrences of 'old' with 'new' in current line
 " :%s/old/new/gi      Replace all occurrences, case-insensitive, entire file
@@ -495,9 +499,12 @@ let g:indentLine_setColors = 1
 " 2. Press ':'
 " 3. Type s/old/new/g and Enter
 
-" -- Useful shortcuts --
-" .    Repeat last substitution command
-
-" Use ce when you want to replace the rest of a word.
-" Use cw when editing mid-word OR editing whitespace.
-" Use ciw when you want to replace the whole word cleanly every time.
+" . - Repeat last substitution command
+" ce - when you want to replace the rest of a word.
+" cw - when editing mid-word OR editing whitespace.
+"
+" ciw - delete word under cursor; change to insert mode
+" viw - highlight word under cursor
+" diw - delete word under cursor; stay in normal mode
+"
+" vii - select current indent block in visual mode
