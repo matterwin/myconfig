@@ -1,0 +1,2 @@
+\renewcommand{\arraystretch}{1.5}
+

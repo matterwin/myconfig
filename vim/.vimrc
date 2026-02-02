@@ -147,8 +147,6 @@ set laststatus=2
 
 set backspace=indent,eol,start
 
-
-
 " VimTeX settings
 let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
@@ -209,12 +207,12 @@ let g:vimshell_force_overwrite_statusline = 0
 " Get rid of ^M chars after pasting
 " :%s/\r//g
 
-
+xnoremap u <Nop>
 
 " fzf
 " Keybinding for fuzzy file search
-nnoremap <C-p> :Files<CR>
-nnoremap <C-f> :Lines<CR>
+nnoremap <C-f> :Files<CR>
+nnoremap <C-p> :Lines<CR>
 nnoremap <C-b> :Buffers<CR>
 nnoremap <C-g> :Ag<CR>
 " nnoremap <C-t> :Tags<CR>
@@ -226,8 +224,6 @@ let g:fzf_layout = { 'down': '60%' }
 
 " ctags -R .
 
-
-
 " vim-tmux-navigator configuration
 let g:tmux_navigator_no_mappings = 1
 nnoremap <C-h> :TmuxNavigateLeft<CR>
@@ -235,10 +231,13 @@ nnoremap <C-j> :TmuxNavigateDown<CR>
 nnoremap <C-k> :TmuxNavigateUp<CR>
 nnoremap <C-l> :TmuxNavigateRight<CR>
 
+tnoremap <C-h> <C-\><C-n><C-w>h
+tnoremap <C-j> <C-\><C-n><C-w>j
+tnoremap <C-k> <C-\><C-n><C-w>k
+tnoremap <C-l> <C-\><C-n><C-w>l
 
 " vim-sneak
 let g:sneak#label = 1
-
 
 " ag.vim
 " Used to searching for words in files fast
@@ -269,7 +268,6 @@ map <C-n> :NERDTreeToggle<CR>
 
 
 " --------------------------------
-
 
 " MAPPINGS AND SETTINGS VIM"
 let mapleader = " "
@@ -356,12 +354,19 @@ set noswapfile
 nnoremap <leader>t :below term<CR>
 nnoremap <leader>g :above term<CR>
 
-"ctrl+t - exit terminal
-tnoremap <C-t> <C-\><C-n>
-tnoremap <ScrollWheelUp> <C-\><C-n>
-tnoremap <ScrollWheelDown> <C-\><C-n>
+" Terminal splits by direction
+nnoremap <leader>th :leftabove  vert term<CR>   " left
+nnoremap <leader>tl :rightbelow vert term<CR>   " right
+nnoremap <leader>tj :belowright term<CR>        " down
+nnoremap <leader>tk :aboveleft  term<CR>        " up
 
-nnoremap <C-q><C-q> :q<CR>
+"ctrl+t - exit terminal
+" tnoremap <C-t> <C-\><C-n>
+tnoremap <C-\> <C-\><C-n>
+" tnoremap <ScrollWheelUp> <C-\><C-n>
+" tnoremap <ScrollWheelDown> <C-\><C-n>
+
+" nnoremap <C-q><C-q> :q<CR>
 
 nnoremap <leader>h :split<CR>
 nnoremap <leader>j :vsplit<CR>
@@ -457,6 +462,26 @@ let g:indentLine_enabled        = 0      " enable indent lines
 let g:indentLine_setColors      = 1      " enable colors
 let g:indentLine_showFirstIndentLevel = 1 " show first indent
 
+" tabs
+nnoremap <Leader>n :tabnew<CR>
+nnoremap <Leader>s :tab split<CR>
+
+" find and replace
+nnoremap <leader>r :%s/
+" nnoremap <leader>r :%s/old/new/gc
+
+" Make Esc behave like Ctrl-C everywhere
+inoremap <Esc> <C-c>
+vnoremap <Esc> <C-c>
+snoremap <Esc> <C-c>
+cnoremap <Esc> <C-c>
+onoremap <Esc> <C-c>
+
+" Reduce delays for terminal escape sequences
+set ttimeout
+set ttimeoutlen=10
+set notimeout
+
 " nathanaelkane/vim-indent-guides
 " let g:indent_guides_enable_on_vim_startup = 1
 " let g:indent_guides_start_level = 1
@@ -464,11 +489,11 @@ let g:indentLine_showFirstIndentLevel = 1 " show first indent
 " let g:indent_guides_draw_blank = 1
 "
 
-nnoremap <leader>tl :colorscheme PaperColor<CR>
-nnoremap <leader>td :colorscheme gruvbox<CR>
+" nnoremap <leader>tl :colorscheme PaperColor<CR>
+" nnoremap <leader>td :colorscheme gruvbox<CR>
 
-nnoremap <leader>bd :set background=dark<CR>
-nnoremap <leader>bl :set background=light<CR>
+" nnoremap <leader>bd :set background=dark<CR>
+" nnoremap <leader>bl :set background=light<CR>
 
 " ---------- Helpful vim shortcuts ----------
 
@@ -503,8 +528,76 @@ nnoremap <leader>bl :set background=light<CR>
 " ce - when you want to replace the rest of a word.
 " cw - when editing mid-word OR editing whitespace.
 "
-" ciw - delete word under cursor; change to insert mode
-" viw - highlight word under cursor
-" diw - delete word under cursor; stay in normal mode
+" ciw  - change word under cursor; enter insert mode
+" caW  - change around WORD; includes surrounding whitespace, enter insert mode
+" ci(  - change inside parentheses
+" ca(  - change around parentheses (includes the parentheses)
+" cib  - change inside parentheses (balanced)
+" ci{  - change inside braces
+" ca{  - change around braces (includes the braces)
+" ci[  - change inside brackets
+" ca[  - change around brackets (includes the brackets)
+" ci"  - change inside double quotes
+" ca"  - change around double quotes (includes the quotes)
+" ci'  - change inside single quotes
+" ca'  - change around single quotes (includes the quotes)
+
+" viw  - visually select word under cursor
+" vaw  - visually select a word (includes surrounding whitespace)
+" diw  - delete word under cursor; stay in normal mode
+" diW  - delete WORD (to surrounding whitespace)
+" dw   - delete from cursor to end of word
+
+" vii  - visually select current indent block
+" cii  - change current indent block
+" dii  - delete current indent block
+" cai  - change around indent block (includes the surrounding indent)
+
+" c - change (delete text, then enter insert mode)
+" d - delete (delete text, stay in normal mode)
+" v - visual select (highlight text)
+" y - yank (copy text)
+" p - paste yanked or deleted text
+
+" c and d are basically the same, c moves you into insert mode
+" i vs a - 'i' = inside the object, 'a' = around the object (includes delimiters)
+" this can be used with c, d, v, y, etc.
 "
-" vii - select current indent block in visual mode
+" d$ - delete from cursor to end of line
+
+" ctrl+q - gives visual block (i.e. like duplicated cursors) 
+" v + ctrl+q - gives column block selection
+"
+" ctrl + d - scroll down with key
+" ctrl + u - scroll up with key
+" Shift + w - move to next continuous word
+" Shift + e - move to next end of continuous word (basically like w/b/e but can
+" just to next whitespace)
+"
+" f + character - targeted character jumps
+" ; to go to next instance of target
+" , to go back to previous instance
+"
+" v + i + b - visual inside block
+" v + i " - visual inside quotes
+" v + i + [ - visual inside bracket, etc
+" v + i + { - visual inside braces
+"
+" v + a + ... - visual around it
+"
+" / + word - search for word
+" * - search for word in cursor
+"
+" ctrl + q + I + type your changes + esc + esc - gives you multiple line
+" change for insertion (visual block mode)
+"
+" " ctrl + q + x - gives you multiple line
+" change for deletion (visual block mode)
+"
+" " ctrl + q + I + type your changes + esc + esc - gives you multiple line
+" change for insertion (visual block mode)
+"
+" shift + d - delete till the end of line
+" shift + c to delete whole line and go into insert mode
+"
+" d + f + character - delets from cursor up to character inclusive

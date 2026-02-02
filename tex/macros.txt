@@ -1,4 +1,27 @@
 % ---- Macros ----
+\newcommand{\FlaTwoByTwo}[4]{%
+\left(
+\begin{array}{c|c}
+#1 & #2 \\
+\hline
+#3 & #4
+\end{array}
+\right)
+}
+\newcommand{\FlaOneByThreeR}[3]{%
+\left(
+\begin{array}{c|cc}
+#1 & #2 & #3
+\end{array}
+\right)%
+}
+\newcommand{\FlaOneByTwo}[2]{%
+\left(
+\begin{array}{c|c}
+#1 & #2
+\end{array}
+\right)%
+}
 \newcommand{\pbreak}{\vspace{30pt}}
 \newcommand{\ud}[1]{\underline{#1}}
 \newcommand{\ital}[1]{\textit{#1}}
@@ -10,6 +33,9 @@
 \newcommand{\mdef}{\overset{\mathrm{def}}{=}}
 \newcommand{\h}[1]{\textbf{\fbox{#1}}}
 \newcommand{\real}{\mathbb{R}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\amp}{&}
 \newcommand{\tpose}{^{\top}}
 \newcommand{\ident}[1][]{\mathbf{I}_{#1}}
 \newcommand{\defeq}{\overset{\cdot}{=}}
@@ -53,8 +79,13 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\rightarrowname}[1]{\ensuremath{\xrightarrow{\text{#1}}}}
 \newcommand{\leftarrowname}[1]{\ensuremath{\xleftarrow{\text{#1}}}}
+\newcommand{\lt}{<}
+\newcommand{\gt}{>}
+\setlength{\parindent}{0pt}
+\newcommand{\tab}{\hspace*{2em}}
+\newcommand{\pause}{}
 % ------------------------------
+\DeclareMathSizes{10}{13}{8}{8}
+% \DeclareMathSizes{<text size>}{<math size>}{<script size>}{<scriptscript size>}
+% \renewcommand{\arraystretch}{1.0}
 
-% for 12pt
-% \DeclareMathSizes{12}{14}{10}{8}
-\DeclareMathSizes{10}{12}{8}{6}
