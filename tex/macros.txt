@@ -1,4 +1,71 @@
 % ---- Macros ----
+\newcommand{\FlaThreeByThreeTL}[9]{%
+\left(
+\begin{array}{cc|c}
+#1 & #2 & #3\\
+#4 & #5 & #6\\
+\hline
+#7 & #8 & #9
+\end{array}
+\right)%
+}
+\newcommand{\boxedtext}[1]{%
+\begin{tcolorbox}[colback=white,colframe=black,sharp corners,boxrule=0.5pt]%
+#1
+\end{tcolorbox}%
+}
+\newcommand{\FlaTwoByOne}[2]{%
+\left(
+\begin{array}{c}
+#1\\
+\hline
+#2
+\end{array}
+\right)%
+}
+\newcommand{\FlaThreeByOneB}[3]{%
+\left(
+\begin{array}{c}
+#1\\
+\hline
+#2\\
+#3
+\end{array}
+\right)%
+}
+\newcommand{\FlaTwoByTwoSingleLine}[4]{%
+\left(
+\begin{array}{cc}
+#1 & #2\\
+#3 & #4
+\end{array}
+\right)%
+}
+\newcommand{\complexpm}{\boxed{\pm}}
+\newcommand{\FlaOneByTwoSingleLine}[2]{%
+\left(
+\begin{array}{cc}
+    #1 & #2
+\end{array}
+\right)%
+}
+\newcommand{\FlaTwoByOneSingleLine}[2]{%
+\left(
+\begin{array}{cc}
+#1\\
+#2
+\end{array}
+\right)%
+}
+\newcommand{\FlaThreeByThreeBR}[9]{%
+\left(
+\begin{array}{c|cc}
+#1 & #2 & #3 \\ \hline
+#4 & #5 & #6 \\
+#7 & #8 & #9
+\end{array}
+\right)%
+}
 \newcommand{\FlaTwoByTwo}[4]{%
 \left(
 \begin{array}{c|c}
@@ -22,6 +89,7 @@
 \end{array}
 \right)%
 }
+\newcommand{\Span}{\operatorname{Span}}
 \newcommand{\pbreak}{\vspace{30pt}}
 \newcommand{\ud}[1]{\underline{#1}}
 \newcommand{\ital}[1]{\textit{#1}}
@@ -35,6 +103,7 @@
 \newcommand{\real}{\mathbb{R}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
+\newcommand{\Null}{\mathcal{N}}
 \newcommand{\amp}{&}
 \newcommand{\tpose}{^{\top}}
 \newcommand{\ident}[1][]{\mathbf{I}_{#1}}
@@ -54,6 +123,12 @@
 \newcommand{\ci}[2]{%
   \begin{center}
 	\includegraphics[width=#2\textwidth]{#1}
+  \end{center}
+}
+\newcommand{\cii}[4]{%
+  \begin{center}
+    \includegraphics[width=#2\textwidth]{#1}\hfill
+    \includegraphics[width=#4\textwidth]{#3}
   \end{center}
 }
 \newcommand{\newbp}{%
@@ -87,5 +162,6 @@
 % ------------------------------
 \DeclareMathSizes{10}{13}{8}{8}
 % \DeclareMathSizes{<text size>}{<math size>}{<script size>}{<scriptscript size>}
-% \renewcommand{\arraystretch}{1.0}
+% \renewcommand{\arraystretch}{1.5}
+
 

@@ -56,6 +56,7 @@ Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'dense-analysis/ale'
 call plug#end()
 " ---------------------------------
 
@@ -139,6 +140,8 @@ endfunction
 
 nnoremap <C-w> :call ToggleLspDiagnostics()<CR>
 
+let g:ale_enabled = 0
+nnoremap <C-a> :ALEToggle<CR>
 
 " Aesthetics
 set hlsearch
@@ -207,13 +210,15 @@ let g:vimshell_force_overwrite_statusline = 0
 " Get rid of ^M chars after pasting
 " :%s/\r//g
 
+" disable case keybinds
 xnoremap u <Nop>
+xnoremap U <Nop>
 
 " fzf
 " Keybinding for fuzzy file search
-nnoremap <C-f> :Files<CR>
-nnoremap <C-p> :Lines<CR>
-nnoremap <C-b> :Buffers<CR>
+nnoremap <C-p> :Files<CR>
+" nnoremap <C-f> :Lines<CR>
+" nnoremap <C-b> :Buffers<CR>
 nnoremap <C-g> :Ag<CR>
 " nnoremap <C-t> :Tags<CR>
 
@@ -230,6 +235,8 @@ nnoremap <C-h> :TmuxNavigateLeft<CR>
 nnoremap <C-j> :TmuxNavigateDown<CR>
 nnoremap <C-k> :TmuxNavigateUp<CR>
 nnoremap <C-l> :TmuxNavigateRight<CR>
+
+tnoremap <C-n> <C-\>
 
 tnoremap <C-h> <C-\><C-n><C-w>h
 tnoremap <C-j> <C-\><C-n><C-w>j
@@ -350,28 +357,37 @@ set noswapfile
 " tnoremap <C-k> <C-w>k
 " tnoremap <C-l> <C-w>l
 
-" Terminal"
-nnoremap <leader>t :below term<CR>
-nnoremap <leader>g :above term<CR>
+" terminal splits
+" Normal mode
+nnoremap <leader>H :leftabove vert term<CR>
+nnoremap <leader>L :rightbelow vert term<CR>
+nnoremap <leader>J :belowright term<CR>
+nnoremap <leader>K :aboveleft term<CR>
 
-" Terminal splits by direction
-nnoremap <leader>th :leftabove  vert term<CR>   " left
-nnoremap <leader>tl :rightbelow vert term<CR>   " right
-nnoremap <leader>tj :belowright term<CR>        " down
-nnoremap <leader>tk :aboveleft  term<CR>        " up
+" " Insert mode
+" inoremap <leader>H <Esc>:leftabove vert term<CR>
+" inoremap <leader>L <Esc>:rightbelow vert term<CR>
+" inoremap <leader>J <Esc>:belowright term<CR>
+" inoremap <leader>K <Esc>:aboveleft term<CR>
 
-"ctrl+t - exit terminal
-" tnoremap <C-t> <C-\><C-n>
-tnoremap <C-\> <C-\><C-n>
-" tnoremap <ScrollWheelUp> <C-\><C-n>
-" tnoremap <ScrollWheelDown> <C-\><C-n>
+" " Terminal mode
+" tnoremap <leader>H <C-\><C-N>:leftabove vert term<CR>
+" tnoremap <leader>L <C-\><C-N>:rightbelow vert term<CR>
+" tnoremap <leader>J <C-\><C-N>:belowright term<CR>
+" tnoremap <leader>K <C-\><C-N>:aboveleft term<CR>
 
-" nnoremap <C-q><C-q> :q<CR>
+" exit terminal
+" tnoremap <C-\> <C-\><C-n>
+tnoremap <C-n> <C-\><C-n>
 
-nnoremap <leader>h :split<CR>
-nnoremap <leader>j :vsplit<CR>
-nnoremap <leader>k :split<CR>
-nnoremap <leader>l :vsplit<CR>
+" nnoremap <Esc><Esc> :confirm bd<CR>
+" nnoremap <Esc><Esc> :confirm tabclose<CR>
+nnoremap <Esc><Esc> :confirm close<CR>
+
+nnoremap <leader>k :topleft split<CR>
+nnoremap <leader>j :botright split<CR>
+nnoremap <leader>h :topleft vsplit<CR>
+nnoremap <leader>l :botright vsplit<CR>
 
 " Resize splits with Ctrl + Shift + Arrows
 nnoremap <C-S-Up>    :resize +2<CR>
@@ -466,9 +482,24 @@ let g:indentLine_showFirstIndentLevel = 1 " show first indent
 nnoremap <Leader>n :tabnew<CR>
 nnoremap <Leader>s :tab split<CR>
 
+" Go to tab 1–9 using leader + number
+" Go to tabs 1–9 with Ctrl+number
+nnoremap <leader>1 1gt
+nnoremap <leader>2 2gt
+nnoremap <leader>3 3gt
+nnoremap <leader>4 4gt
+nnoremap <leader>5 5gt
+nnoremap <leader>6 6gt
+nnoremap <leader>7 7gt
+nnoremap <leader>8 8gt
+nnoremap <leader>9 9gt
+
 " find and replace
 nnoremap <leader>r :%s/
 " nnoremap <leader>r :%s/old/new/gc
+
+" sql ft (bs key to gain back C-c)
+let g:ftplugin_sql_omni_key = '<C-j>'
 
 " Make Esc behave like Ctrl-C everywhere
 inoremap <Esc> <C-c>
@@ -478,8 +509,6 @@ cnoremap <Esc> <C-c>
 onoremap <Esc> <C-c>
 
 " Reduce delays for terminal escape sequences
-set ttimeout
-set ttimeoutlen=10
 set notimeout
 
 " nathanaelkane/vim-indent-guides
@@ -525,6 +554,7 @@ set notimeout
 " 3. Type s/old/new/g and Enter
 
 " . - Repeat last substitution command
+
 " ce - when you want to replace the rest of a word.
 " cw - when editing mid-word OR editing whitespace.
 "
@@ -601,3 +631,15 @@ set notimeout
 " shift + c to delete whole line and go into insert mode
 "
 " d + f + character - delets from cursor up to character inclusive
+" or can do : dF, df, cf, cF, ct, cT, etc
+
+" ylp or ylP - dup char under cursor and place
+ 
+" f + char - jump forward to first occurence of char and jumps on char 
+" F + char - jump to first occurence of char and jumps on char
+" t + char - jump forward to first occurence of char and jumps on before char
+" T + char - jump to first occurence of char and jumps on before char
+"
+" can do v + f + char, c + f + char, d + f + char, r + f + char, etc
+" to go from cursor to char for whatever operation!
+
