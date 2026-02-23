@@ -1,0 +1,12 @@
+sudo pacman -S iwd
+sudo systemctl enable --now iwd
+iwctl
+station wlan0 scan
+station wlan0 get-networks
+station wlan0 connect SSID (name of network)
+ping google.com
+
+// note there are other wireless interfaces (wifi) like:
+// - wlan1
+
+// there are also other interfaces like eth0 (ethernet), usb0 (usb), bluetooth0, virbr0 (virtual), docker0, etc

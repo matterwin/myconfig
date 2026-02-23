@@ -1,0 +1,22 @@
+# Minimalistic commands to mount /dev/sdb2
+
+# Create mount point
+
+sudo mkdir -p /mnt/myusb
+
+# Mount NTFS drive
+
+sudo mount -t ntfs-3g /dev/sdb2 /mnt/myusb
+
+# Access files
+
+ls /mnt/myusb
+
+# Unmount
+
+sudo umount /mnt/myusb
+
+# Mount as user (udisks2)
+
+udisksctl mount -b /dev/sdb2
+

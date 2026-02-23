@@ -1,4 +1,13 @@
 % ---- Macros ----
+\makeatletter
+\newcommand{\bern}{%
+  \begin{enumerate}%
+  \renewcommand{\labelenumi}{\roman{enumi}.}%
+}
+\newcommand{\eern}{%
+  \end{enumerate}%
+}
+\makeatother
 \newcommand{\FlaThreeByThreeTL}[9]{%
 \left(
 \begin{array}{cc|c}
@@ -9,8 +18,26 @@
 \end{array}
 \right)%
 }
+\tcbuselibrary{breakable}
 \newcommand{\boxedtext}[1]{%
-\begin{tcolorbox}[colback=white,colframe=black,sharp corners,boxrule=0.5pt]%
+\begin{tcolorbox}[
+    colback=white,
+    colframe=black,
+    sharp corners,
+    boxrule=0.5pt,
+    breakable
+]%
+#1
+\end{tcolorbox}%
+}
+\newcommand{\bt}[1]{%
+\begin{tcolorbox}[
+    colback=white,
+    colframe=black,
+    sharp corners,
+    boxrule=0.5pt,
+    breakable
+]%
 #1
 \end{tcolorbox}%
 }
@@ -161,7 +188,10 @@
 \newcommand{\pause}{}
 % ------------------------------
 \DeclareMathSizes{10}{13}{8}{8}
-% \DeclareMathSizes{<text size>}{<math size>}{<script size>}{<scriptscript size>}
+
+% optionally:
+% \setcounter{secnumdepth}{0} % removes section numbers
 % \renewcommand{\arraystretch}{1.5}
+% \DeclareMathSizes{<text size>}{<math size>}{<script size>}{<scriptscript size>}
 
 
