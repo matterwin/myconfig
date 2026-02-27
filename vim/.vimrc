@@ -107,7 +107,7 @@ endif
 nnoremap gd :LspDefinition<CR>
 nnoremap gD :LspDeclaration<CR>
 nnoremap gi <plug>(lsp-implementation)
-nnoremap K :LspHover<CR>
+" nnoremap K :LspHover<CR>
 nnoremap gr :LspReferences<CR>
 nnoremap <leader>rn :LspRename<CR>
 nnoremap <leader>e :LspDiagnostic<CR>
@@ -236,15 +236,49 @@ nnoremap <C-j> :TmuxNavigateDown<CR>
 nnoremap <C-k> :TmuxNavigateUp<CR>
 nnoremap <C-l> :TmuxNavigateRight<CR>
 
-tnoremap <C-n> <C-\>
+vnoremap <C-h> :TmuxNavigateLeft<CR>
+vnoremap <C-j> :TmuxNavigateDown<CR>
+vnoremap <C-k> :TmuxNavigateUp<CR>
+vnoremap <C-l> :TmuxNavigateRight<CR>
 
 tnoremap <C-h> <C-\><C-n><C-w>h
 tnoremap <C-j> <C-\><C-n><C-w>j
 tnoremap <C-k> <C-\><C-n><C-w>k
 tnoremap <C-l> <C-\><C-n><C-w>l
 
+tnoremap <C-n> <C-\>
+
+" " Normal mode
+" nnoremap <C-M-h> :TmuxNavigateLeft<CR>
+" nnoremap <C-M-j> :TmuxNavigateDown<CR>
+" nnoremap <C-M-k> :TmuxNavigateUp<CR>
+" nnoremap <C-M-l> :TmuxNavigateRight<CR>
+
+" " Visual mode
+" vnoremap <C-M-h> :TmuxNavigateLeft<CR>
+" vnoremap <C-M-j> :TmuxNavigateDown<CR>
+" vnoremap <C-M-k> :TmuxNavigateUp<CR>
+" vnoremap <C-M-l> :TmuxNavigateRight<CR>
+
+" " Insert mode
+" inoremap <C-M-h> <Esc>:TmuxNavigateLeft<CR>i
+" inoremap <C-M-j> <Esc>:TmuxNavigateDown<CR>i
+" inoremap <C-M-k> <Esc>:TmuxNavigateUp<CR>i
+" inoremap <C-M-l> <Esc>:TmuxNavigateRight<CR>i
+
+" " Terminal mode
+" tnoremap <C-M-h> <C-\><C-n>:TmuxNavigateLeft<CR>
+" tnoremap <C-M-j> <C-\><C-n>:TmuxNavigateDown<CR>
+" tnoremap <C-M-k> <C-\><C-n>:TmuxNavigateUp<CR>
+" tnoremap <C-M-l> <C-\><C-n>:TmuxNavigateRight<CR>
+
 " vim-sneak
 let g:sneak#label = 1
+" s x y -> jump forward to the 2-character sequence xy
+" S x y -> jump backward to xy
+" use the ; and , just like f and F
+
+" keep capslock as fn1 and do esc mode fn1 + w which will be ctrl+w for othernkeyboar
 
 " ag.vim
 " Used to searching for words in files fast
@@ -332,9 +366,11 @@ vnoremap p "_dP
 " set statusline+=%1*%=%3l/%L\ (%p%%)%*           " current line / total lines, percentage
 " set statusline+=%2*%#User5#%4v\ %*              " virtual column number with User5 color
 " set statusline+=%2*0x%04B\ %*                   " character under cursor
- 
+
 " Map Ctrl+s to save the file
 nnoremap <C-s> :w<CR>
+nnoremap ` :w<CR>
+nnoremap <leader>w :w<CR>
 
 " Highlights "
 " highlight Visual ctermbg=black guibg=black
@@ -364,6 +400,11 @@ nnoremap <leader>L :rightbelow vert term<CR>
 nnoremap <leader>J :belowright term<CR>
 nnoremap <leader>K :aboveleft term<CR>
 
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+
 " " Insert mode
 " inoremap <leader>H <Esc>:leftabove vert term<CR>
 " inoremap <leader>L <Esc>:rightbelow vert term<CR>
@@ -379,10 +420,6 @@ nnoremap <leader>K :aboveleft term<CR>
 " exit terminal
 " tnoremap <C-\> <C-\><C-n>
 tnoremap <C-n> <C-\><C-n>
-
-" nnoremap <Esc><Esc> :confirm bd<CR>
-" nnoremap <Esc><Esc> :confirm tabclose<CR>
-nnoremap <Esc><Esc> :confirm close<CR>
 
 nnoremap <leader>k :topleft split<CR>
 nnoremap <leader>j :botright split<CR>
@@ -407,7 +444,7 @@ set smarttab
 set autoindent
 set smartindent
 
-" Shift lines up and down in visual mode (selected lines)
+" Shift lines up s theand down in visual mode (selected lines)
 vnoremap <S-k> :move '<-2<CR>gv
 vnoremap <S-j> :move '>+1<CR>gv
 
@@ -421,6 +458,13 @@ vnoremap <S-l> >gv
 " inoremap <C-l> <Right>
 
 nnoremap 9 $
+vnoremap 9 $
+" nnoremap K $
+" nnoremap J 0
+" vnoremap J 0
+" vnoremap K $
+
+nnoremap D "_D
 nnoremap dd "_dd
 vnoremap d "_d
 
@@ -494,29 +538,60 @@ nnoremap <leader>7 7gt
 nnoremap <leader>8 8gt
 nnoremap <leader>9 9gt
 
+" ---------------------------
 " find and replace
 nnoremap <leader>r :%s/
-" nnoremap <leader>r :%s/old/new/gc
+" :%s/foo/bar/g       " g = replace all matches on a line
+" :%s/foo/bar/c       " c = confirm each replacement
+" :%s/foo/bar/gi      " g + i = replace all, ignore case
+" :%s/foo/bar/gc      " g + c = replace all, confirm each
+" :%s/foo/bar/gci     " g + c + i = replace all, confirm, ignore case
+" :%s/foo/bar/i       " i = ignore case for first match per line
+" :%s/foo/bar/I       " I = match case exactly (override ignorecase)
+" :%s/foo/bar/n       " n = report number of matches only, no change
+" :%s/foo/bar/e       " e = suppress errors (no 'pattern not found')
+" :%s/foo/bar/p       " p = print each line after change
+" :%s/foo/bar/#       " # = print each line after change (alternate)
+" :%s/foo/bar/r       " r = replace one char only (rare)
+" :%s/foo/bar/u       " u = undo as one block
+" :%s/foo/bar/\=expr  " \=expr = use expression to compute replacement
+" :%s/foo/bar/\~/     " \~ = toggle case of replaced text
+" ---------------------------
 
 " sql ft (bs key to gain back C-c)
 let g:ftplugin_sql_omni_key = '<C-j>'
 
-" Make Esc behave like Ctrl-C everywhere
-inoremap <Esc> <C-c>
-vnoremap <Esc> <C-c>
-snoremap <Esc> <C-c>
-cnoremap <Esc> <C-c>
-onoremap <Esc> <C-c>
+set ttimeoutlen=0
+set timeoutlen=200 " default is 1000 ms 
 
-" Reduce delays for terminal escape sequences
-set notimeout
+" disable recording
+nnoremap q <Nop>
+vnoremap q <Nop>
+
+" Map qd as Esc in all modes
+" " nnoremap qd <Esc>
+" inoremap qd <Esc>
+" vnoremap qd <Esc>
+" xnoremap qd <Esc>
+" snoremap qd <Esc>
+" onoremap qd <Esc>
+
+" inoremap <A-q> <Esc>
+" vnoremap <A-q> <Esc>
+" xnoremap <A-q> <Esc>
+" snoremap <A-q> <Esc>
+" onoremap <A-q> <Esc>
+
+nnoremap <Leader>\ :noh<CR>
+" nnoremap <Esc><Esc> :confirm bd<CR>
+" nnoremap <Esc><Esc> :confirm tabclose<CR>
+nnoremap <leader>q :confirm close<CR>
 
 " nathanaelkane/vim-indent-guides
 " let g:indent_guides_enable_on_vim_startup = 1
 " let g:indent_guides_start_level = 1
 " let g:indent_guides_guide_size = 1
 " let g:indent_guides_draw_blank = 1
-"
 
 " nnoremap <leader>tl :colorscheme PaperColor<CR>
 " nnoremap <leader>td :colorscheme gruvbox<CR>
@@ -571,6 +646,8 @@ set notimeout
 " ca"  - change around double quotes (includes the quotes)
 " ci'  - change inside single quotes
 " ca'  - change around single quotes (includes the quotes)
+
+" v/d/c + iW - highlights strictly word sep by spaces
 
 " viw  - visually select word under cursor
 " vaw  - visually select a word (includes surrounding whitespace)
@@ -643,3 +720,5 @@ set notimeout
 " can do v + f + char, c + f + char, d + f + char, r + f + char, etc
 " to go from cursor to char for whatever operation!
 
+" d + number + hjkl -> deletes number rows
+" d + hjkl -> deletes whatever hjkl from cursor 
