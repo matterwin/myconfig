@@ -138,7 +138,7 @@ function! ToggleLspDiagnostics()
   endif
 endfunction
 
-nnoremap <C-w> :call ToggleLspDiagnostics()<CR>
+" nnoremap <C-w> :call ToggleLspDiagnostics()<CR>
 
 let g:ale_enabled = 0
 nnoremap <C-a> :ALEToggle<CR>
@@ -236,11 +236,6 @@ nnoremap <C-j> :TmuxNavigateDown<CR>
 nnoremap <C-k> :TmuxNavigateUp<CR>
 nnoremap <C-l> :TmuxNavigateRight<CR>
 
-vnoremap <C-h> :TmuxNavigateLeft<CR>
-vnoremap <C-j> :TmuxNavigateDown<CR>
-vnoremap <C-k> :TmuxNavigateUp<CR>
-vnoremap <C-l> :TmuxNavigateRight<CR>
-
 tnoremap <C-h> <C-\><C-n><C-w>h
 tnoremap <C-j> <C-\><C-n><C-w>j
 tnoremap <C-k> <C-\><C-n><C-w>k
@@ -322,8 +317,8 @@ set nopaste
 " highlight Visual guifg=#FFFFFF guibg=#111111
 
 " Tabs
-nnoremap <C-Left>  :tabprevious<CR>
-nnoremap <C-Right> :tabnext<CR>
+nnoremap <C-;> :tabprevious<CR>
+nnoremap <C-'> :tabnext<CR>
 nnoremap <Tab> <Nop>
 
 " Buffers (jump list style)
@@ -394,7 +389,6 @@ set noswapfile
 " tnoremap <C-l> <C-w>l
 
 " terminal splits
-" Normal mode
 nnoremap <leader>H :leftabove vert term<CR>
 nnoremap <leader>L :rightbelow vert term<CR>
 nnoremap <leader>J :belowright term<CR>
@@ -419,7 +413,13 @@ inoremap <C-l> <Right>
 
 " exit terminal
 " tnoremap <C-\> <C-\><C-n>
-tnoremap <C-n> <C-\><C-n>
+" tnoremap <C-d> <C-\><C-n>
+" tnoremap <Esc> <C-\><C-n>
+
+inoremap <C-w> <Esc>
+tnoremap <C-w> <C-\><C-n>
+vnoremap <C-w> <Esc>
+nnoremap <C-w> <Esc>
 
 nnoremap <leader>k :topleft split<CR>
 nnoremap <leader>j :botright split<CR>
@@ -562,7 +562,7 @@ nnoremap <leader>r :%s/
 let g:ftplugin_sql_omni_key = '<C-j>'
 
 set ttimeoutlen=0
-set timeoutlen=200 " default is 1000 ms 
+set timeoutlen=300 " default is 1000 ms 
 
 " disable recording
 nnoremap q <Nop>
