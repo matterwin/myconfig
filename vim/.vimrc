@@ -138,10 +138,10 @@ function! ToggleLspDiagnostics()
   endif
 endfunction
 
-" nnoremap <C-w> :call ToggleLspDiagnostics()<CR>
 
 let g:ale_enabled = 0
 nnoremap <C-a> :ALEToggle<CR>
+" nnoremap <C-a> :call ToggleLspDiagnostics()<CR>
 
 " Aesthetics
 set hlsearch
@@ -164,25 +164,55 @@ nnoremap <F6> :VimtexView<CR>
 " sudo apt install texlive-latex-base latexmk zathura zathura-pdf-poppler
 " To compile: latexmk -pdf main.tex or pdflatex main.tex
 " To view pdf: zathura main.pdf & or explorer.exe main.pdf (this is for wsl)
-
-" lightline.vim
+" ------------------------------
+" Statusline config (bottom bar)
+" ------------------------------
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'mytheme',
       \ 'active': {
-      \ 'left': [ [ 'mode', ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
-      \ 'right': [ [ 'lineinfo' ],
-      \              [ 'percent' ],
-      \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ] ]
-      \ },
-      \ 'component': {
-      \   'charvaluehex': '0x%B'
+      \   'left': [ ['mode'], ['gitbranch', 'readonly', 'filename', 'modified'] ],
+      \   'right': [ ['lineinfo'], ['percent'], ['filetype'] ]
       \ },
       \ 'component_function': {
       \   'gitbranch': 'gitbranch#name',
       \   'filename': 'LightlineFilename'
       \ },
       \ }
+
+" === Lightline basic colors for tabline ===
+let s:p = {'normal': {}, 'inactive': {}, 'insert': {}, 'replace': {}, 'visual': {}, 'tabline': {}}
+
+" --- Statusline ---
+let s:p.normal.left   = [ ['black', 'white', 15, 238] ]
+let s:p.normal.middle = [ ['black', 'white', 15, 238] ]
+let s:p.normal.right  = [ ['black', 'white', 15, 238] ]
+
+let s:p.inactive.left   = [ ['black', 'white', 'black', 238 ] ]
+let s:p.inactive.middle = [ ['black', 'white', 'black', 238 ] ]
+let s:p.inactive.right  = [ ['black', 'white', 'black', 238 ] ]
+
+" --- Tabline ---
+" Active tab
+let s:p.tabline.tabsel = [ ['black', 'white', 'black', 'grey'] ]
+
+" Inactive tabs
+let s:p.tabline.left   = [ ['white', 'grey', 'grey', 'NONE'] ]
+let s:p.tabline.middle = [ ['white', 'grey', 'grey', 'NONE'] ]
+let s:p.tabline.right  = [ ['white', 'grey', 'grey', 'NONE'] ]
+
+" Apply palette
+let g:lightline#colorscheme#mytheme#palette = lightline#colorscheme#fill(s:p)
+let g:lightline.colorscheme = 'mytheme'
+
+" --- Layout ---
+let g:lightline.active   = {'left': [['mode'], ['filename']], 'right': [['lineinfo'], ['percent']]}
+let g:lightline.inactive = {'left': [['mode'], ['filename']], 'right': [['lineinfo'], ['percent']]}
+
+let g:lightline.tabline_separator = { 'left': '', 'right': '' }
+let g:lightline.tabline_subseparator = { 'left': '', 'right': '' }
+
+" Always show tabline
+set showtabline=2
 
 function! LightlineFilename()
   return &filetype ==# 'vimfiler' ? vimfiler#get_status_string() :
@@ -196,16 +226,15 @@ function! LightlineTruncatePath(fullpath)
     return '[No Name]'
   endif
 
-  let pathParts = split(a:fullpath, '/')
+  let trimmed = substitute(a:fullpath, '^' . $HOME . '/', '', '')
+  let pathParts = split(trimmed, '/')
 
-  " Only trim if there are more than 2 parts
-  return len(pathParts) > 2 ? join(pathParts[-2:], '/') : a:fullpath
+  return len(pathParts) > 2 ? join(pathParts[-2:], '/') : trimmed
 endfunction
 
 let g:unite_force_overwrite_statusline = 0
 let g:vimfiler_force_overwrite_statusline = 0
 let g:vimshell_force_overwrite_statusline = 0
-
 
 " Get rid of ^M chars after pasting
 " :%s/\r//g
@@ -490,21 +519,15 @@ let g:gruvbox_italic=0
 let g:gruvbox_bold=1
 let g:gruvbox_underline=1
 let g:gruvbox_undercurl=1
-let g:gruvbox_invert_selection=0  " Don't invert selection
-let g:gruvbox_transparent_bg=0    " Transparent mode
-let g:gruvbox_contrast_dark="soft"  " Contrast can be 'hard', 'medium', or 'soft'
+let g:gruvbox_invert_selection=0
+let g:gruvbox_transparent_bg=0
+let g:gruvbox_contrast_dark="soft"
 
-" For transparent bg
-" autocmd VimEnter * hi Normal guibg=NONE ctermbg=NONE
-" autocmd VimEnter * hi NormalNC guibg=NONE ctermbg=NONE
-" autocmd VimEnter * hi SignColumn guibg=NONE ctermbg=NONE
-" autocmd VimEnter * hi VertSplit guibg=NONE ctermbg=NONE
-" autocmd VimEnter * hi LineNr guibg=NONE ctermbg=NONE
-" autocmd VimEnter * hi EndOfBuffer guibg=NONE ctermbg=NONE
-
-autocmd ColorScheme gruvbox hi Comment ctermfg=gray
-
+" Load Gruvbox
 colorscheme gruvbox
+
+" Optional overrides after loading the scheme
+autocmd ColorScheme gruvbox hi Comment ctermfg=grey
 
 " syntax on
 " colorscheme monokai
@@ -537,6 +560,17 @@ nnoremap <leader>6 6gt
 nnoremap <leader>7 7gt
 nnoremap <leader>8 8gt
 nnoremap <leader>9 9gt
+
+nnoremap 1 1gt
+nnoremap 2 2gt
+nnoremap 3 3gt
+nnoremap 4 4gt
+nnoremap 5 5gt
+nnoremap 6 6gt
+nnoremap 7 7gt
+nnoremap 8 8gt
+nnoremap 9 9gt
+nnoremap 0 :tablast<CR>
 
 " ---------------------------
 " find and replace
@@ -722,3 +756,4 @@ nnoremap <leader>q :confirm close<CR>
 
 " d + number + hjkl -> deletes number rows
 " d + hjkl -> deletes whatever hjkl from cursor 
+
