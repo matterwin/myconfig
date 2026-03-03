@@ -60,6 +60,13 @@ Plug 'dense-analysis/ale'
 call plug#end()
 " ---------------------------------
 
+" disable predefined C-w, includes: splits, etc
+nnoremap <C-w> <Nop>
+vnoremap <C-w> <Nop>
+xnoremap <C-w> <Nop>
+onoremap <C-w> <Nop>
+tnoremap <C-w> <Nop>
+
 "" Vim Lsp:
 filetype plugin on
 " copied (almost) directly from the vim-lsp docs:
@@ -158,9 +165,9 @@ set conceallevel=0
 let g:tex_conceal='abdmg'
 let g:vimtex_mappings_enabled = 0
 let g:vimtex#digestif#enabled = 0
+nnoremap \vc :VimtexCompile<CR>
+nnoremap \vv :VimtexView<CR>
 
-nnoremap <C-_> :VimtexCompile<CR>
-nnoremap <F6> :VimtexView<CR>
 " sudo apt install texlive-latex-base latexmk zathura zathura-pdf-poppler
 " To compile: latexmk -pdf main.tex or pdflatex main.tex
 " To view pdf: zathura main.pdf & or explorer.exe main.pdf (this is for wsl)
@@ -193,7 +200,7 @@ let s:p.inactive.right  = [ ['black', 'white', 'black', 238 ] ]
 
 " --- Tabline ---
 " Active tab
-let s:p.tabline.tabsel = [ ['black', 'white', 'black', 'grey'] ]
+let s:p.tabline.tabsel = [ ['black', 'white', 15, 238] ]
 
 " Inactive tabs
 let s:p.tabline.left   = [ ['white', 'grey', 'grey', 'NONE'] ]
@@ -248,7 +255,7 @@ xnoremap U <Nop>
 nnoremap <C-p> :Files<CR>
 " nnoremap <C-f> :Lines<CR>
 " nnoremap <C-b> :Buffers<CR>
-nnoremap <C-g> :Ag<CR>
+nnoremap <C-h> :Ag<CR>
 " nnoremap <C-t> :Tags<CR>
 
 let g:fzf_layout = { 'down': '60%' }
@@ -308,7 +315,7 @@ let g:sneak#label = 1
 " Used to searching for words in files fast
 " Need this to ag
 " brew install the_silver_searcher
-nnoremap <C-g> :Ag<CR>
+nnoremap <C-h> :Ag<CR>
 " nnoremap <C-g> :silent Ag<CR>
 
 " command! -nargs=+ Ag
@@ -354,42 +361,60 @@ nnoremap <Tab> <Nop>
 nnoremap <C-I> <C-I>   " jump forward
 nnoremap <C-O> <C-O>   " jump back
 
-" Visuals "
-" set fillchars=eob:\ 
-" hi MatchParen cterm=bold ctermbg=none ctermfg=yellow
+" LaTex General/Math
+inoremap ,f \frac{}{}<Left><Left><Left>
+inoremap ,6 ^{}<Left>
+inoremap ,_ _{}<Left>
 
-" Define Highlight Groups
-" hi User1 ctermfg=White
-" hi User2 ctermfg=Red
-" hi User3 ctermfg=Magenta
-" hi User4 ctermfg=Green
-" hi User5 ctermfg=Yellow
-" hi StatusLine ctermbg=8 ctermfg=DarkRed
-" hi StatusLineNC ctermbg=8 ctermfg=Red
+inoremap ,s \sum_{}^{}<Left><Left><Left>
+inoremap ,i \int_{}^{}<Left><Left><Left>
 
-" function! GitBranch()
-"   let branch = system('git rev-parse --abbrev-ref HEAD')
-"   return substitute(branch, '\n', '', 'g')
-" endfunction
+inoremap ,( \left(  \right)<Left><Left><Left>
+inoremap ,[ \left[  \right]<Left><Left><Left>
+inoremap ,{ \left\{  \right\}<Left><Left><Left>
 
-" Add the branch name to the statusline
+inoremap ,ss \subsection*{}<Left>
+inoremap ,eq \begin{equation*}<CR><CR>\end{equation*}<Esc>kA
+inoremap ,ba \begin{array}<CR><CR>\end{array}<Esc>kA
+inoremap ,al \begin{aligned}<CR><CR>\end{aligned}<C-o>k
+inoremap ,tb \textbf{}<Left>
+inoremap <C-a> \textbf{}<Left>
+inoremap <C-z> {
+inoremap <C-x> }
+inoremap ,ub \underbrace{}_{}<Left><Left><Left><Left>
+inoremap ,ob \overbrace{}^{}<Left><Left><Left><Left>
+
+inoremap ,a \alpha
+inoremap ,b \beta
+inoremap ,g \gamma
+inoremap ,d \delta
+inoremap ,l \lambda
+inoremap ,p \pi
+inoremap ,t \theta
+inoremap ,e \epsilon
+inoremap ,c \chi
+inoremap ,e \upsilon
+
+inoremap ,v \mathbf{}<Left>
+inoremap ,m \mathbb{}<Left>
+
+inoremap ,4 $$<Left>
+inoremap ,\ \[ \]<Left><Left>
+
+inoremap ,n \sin{}<Left>
+inoremap ,o \cos{}<Left>
+inoremap ,q \log{}<Left>
+
+" LaTex math visual
+nnoremap ,im F$lvf$h
+nnoremap ,am F$vf$
+nnoremap ,iM F\[lvf\]h
+nnoremap ,aM F\[vf\]
 
 " Clipboard "
 set clipboard=unnamedplus
 " Gets rid of blackhole copying from pasting
 vnoremap p "_dP
-
-" Set up Statusline with Colors
-" set statusline=
-" set statusline=%{GitBranch()}%*
-" set statusline+=%3*%#User1#\ %n\ %*             " buffer number with User1 color
-" set statusline+=%5*%#User2#%{&ff}36%*             " file format with User2 color
-" set statusline+=%3*%#User3#%y%*                 " file type with User3 color
-" set statusline+=%4*\ %<%F%*                     " full path
-" set statusline+=%2*%#User4#%m%*                 " modified flag with User4 color
-" set statusline+=%1*%=%3l/%L\ (%p%%)%*           " current line / total lines, percentage
-" set statusline+=%2*%#User5#%4v\ %*              " virtual column number with User5 color
-" set statusline+=%2*0x%04B\ %*                   " character under cursor
 
 " Map Ctrl+s to save the file
 nnoremap <C-s> :w<CR>
@@ -404,19 +429,6 @@ set splitbelow
 set splitright
 set noswapfile
 
-" I use tmux now
-" Map Ctrl+h/j/k/l to move between windows
-" nnoremap <C-h> <C-w>h
-" nnoremap <C-j> <C-w>j
-" nnoremap <C-k> <C-w>k
-" nnoremap <C-l> <C-w>l
-
-" Map Ctrl+h/j/k/l to move between windows in terminal mode
-" tnoremap <C-h> <C-w>h
-" tnoremap <C-j> <C-w>j
-" tnoremap <C-k> <C-w>k
-" tnoremap <C-l> <C-w>l
-
 " terminal splits
 nnoremap <leader>H :leftabove vert term<CR>
 nnoremap <leader>L :rightbelow vert term<CR>
@@ -428,27 +440,17 @@ inoremap <C-j> <Down>
 inoremap <C-k> <Up>
 inoremap <C-l> <Right>
 
-" " Insert mode
-" inoremap <leader>H <Esc>:leftabove vert term<CR>
-" inoremap <leader>L <Esc>:rightbelow vert term<CR>
-" inoremap <leader>J <Esc>:belowright term<CR>
-" inoremap <leader>K <Esc>:aboveleft term<CR>
-
-" " Terminal mode
-" tnoremap <leader>H <C-\><C-N>:leftabove vert term<CR>
-" tnoremap <leader>L <C-\><C-N>:rightbelow vert term<CR>
-" tnoremap <leader>J <C-\><C-N>:belowright term<CR>
-" tnoremap <leader>K <C-\><C-N>:aboveleft term<CR>
-
-" exit terminal
-" tnoremap <C-\> <C-\><C-n>
-" tnoremap <C-d> <C-\><C-n>
-" tnoremap <Esc> <C-\><C-n>
-
 inoremap <C-w> <Esc>
 tnoremap <C-w> <C-\><C-n>
 vnoremap <C-w> <Esc>
-nnoremap <C-w> <Esc>
+" nnoremap <C-w> <Esc>
+
+nnoremap <Leader>v <C-q>
+inoremap <C-q> <Esc>
+tnoremap <C-q> <C-\><C-n>
+vnoremap <C-q> <Esc>
+nnoremap <C-q> <Esc>
+
 
 nnoremap <leader>k :topleft split<CR>
 nnoremap <leader>j :botright split<CR>
@@ -481,17 +483,8 @@ vnoremap <S-j> :move '>+1<CR>gv
 vnoremap <S-h> <gv
 vnoremap <S-l> >gv
 
-" inoremap <C-h> <Left>
-" inoremap <C-j> <Down>
-" inoremap <C-k> <Up>
-" inoremap <C-l> <Right>
-
 nnoremap 9 $
 vnoremap 9 $
-" nnoremap K $
-" nnoremap J 0
-" vnoremap J 0
-" vnoremap K $
 
 nnoremap D "_D
 nnoremap dd "_dd
@@ -550,7 +543,6 @@ nnoremap <Leader>n :tabnew<CR>
 nnoremap <Leader>s :tab split<CR>
 
 " Go to tab 1–9 using leader + number
-" Go to tabs 1–9 with Ctrl+number
 nnoremap <leader>1 1gt
 nnoremap <leader>2 2gt
 nnoremap <leader>3 3gt
@@ -560,17 +552,18 @@ nnoremap <leader>6 6gt
 nnoremap <leader>7 7gt
 nnoremap <leader>8 8gt
 nnoremap <leader>9 9gt
+nnoremap <leader>0 :tablast<CR>
 
-nnoremap 1 1gt
-nnoremap 2 2gt
-nnoremap 3 3gt
-nnoremap 4 4gt
-nnoremap 5 5gt
-nnoremap 6 6gt
-nnoremap 7 7gt
-nnoremap 8 8gt
-nnoremap 9 9gt
-nnoremap 0 :tablast<CR>
+" nnoremap 1 1gt
+" nnoremap 2 2gt
+" nnoremap 3 3gt
+" nnoremap 4 4gt
+" nnoremap 5 5gt
+" nnoremap 6 6gt
+" nnoremap 7 7gt
+" nnoremap 8 8gt
+" nnoremap 9 9gt
+" nnoremap 0 :tablast<CR>
 
 " ---------------------------
 " find and replace
