@@ -1,3 +1,5 @@
+let mapleader = " "
+
 "source ~/.vimrc
 " --------------------------------------- "
 " Installs
@@ -47,6 +49,7 @@ Plug 'NLKNguyen/papercolor-theme'
 Plug 'crusoexia/vim-monokai'
 Plug 'Yggdroot/indentLine'
 Plug 'nathanaelkane/vim-indent-guides'
+Plug 'ryanoasis/vim-devicons'
 
 " Academic
 Plug 'lervag/vimtex'
@@ -116,9 +119,9 @@ nnoremap gD :LspDeclaration<CR>
 nnoremap gi <plug>(lsp-implementation)
 " nnoremap K :LspHover<CR>
 nnoremap gr :LspReferences<CR>
-nnoremap <leader>rn :LspRename<CR>
-nnoremap <leader>e :LspDiagnostic<CR>
-nnoremap <leader>f :LspFormat<CR>
+" nnoremap <leader>rn :LspRename<CR>
+" nnoremap <leader>e :LspDiagnostic<CR>
+" nnoremap <leader>f :LspFormat<CR>
 nnoremap ]d :LspDiagnosticNext<CR>
 nnoremap [d :LspDiagnosticPrev<CR>
 
@@ -147,8 +150,9 @@ endfunction
 
 
 let g:ale_enabled = 0
-nnoremap <C-a> :ALEToggle<CR>
-" nnoremap <C-a> :call ToggleLspDiagnostics()<CR>
+let b:ale_fixers = ['prettier', 'eslint']
+nnoremap <leader>a :ALEToggle<CR>
+" nnoremap <C-w> :call ToggleLspDiagnostics()<CR>
 
 " Aesthetics
 set hlsearch
@@ -171,9 +175,11 @@ nnoremap \vv :VimtexView<CR>
 " sudo apt install texlive-latex-base latexmk zathura zathura-pdf-poppler
 " To compile: latexmk -pdf main.tex or pdflatex main.tex
 " To view pdf: zathura main.pdf & or explorer.exe main.pdf (this is for wsl)
+
 " ------------------------------
-" Statusline config (bottom bar)
+" Statusline config (bottom bar and tabs)
 " ------------------------------
+
 let g:lightline = {
       \ 'colorscheme': 'mytheme',
       \ 'active': {
@@ -185,6 +191,19 @@ let g:lightline = {
       \   'filename': 'LightlineFilename'
       \ },
       \ }
+
+function! LightlineFilename()
+    let l:fname = expand('%:t')
+    if l:fname == ''
+        let l:fname = '[No Name]'
+    endif
+
+    if &modified
+        let l:fname .= ' [+]'
+    endif
+
+    return l:fname
+endfunction
 
 " === Lightline basic colors for tabline ===
 let s:p = {'normal': {}, 'inactive': {}, 'insert': {}, 'replace': {}, 'visual': {}, 'tabline': {}}
@@ -221,12 +240,12 @@ let g:lightline.tabline_subseparator = { 'left': '', 'right': '' }
 " Always show tabline
 set showtabline=2
 
-function! LightlineFilename()
-  return &filetype ==# 'vimfiler' ? vimfiler#get_status_string() :
-        \ &filetype ==# 'unite' ? unite#get_status_string() :
-        \ &filetype ==# 'vimshell' ? vimshell#get_status_string() :
-        \ LightlineTruncatePath(expand('%:p'))
-endfunction
+" function! LightlineFilename()
+"   return &filetype ==# 'vimfiler' ? vimfiler#get_status_string() :
+"         \ &filetype ==# 'unite' ? unite#get_status_string() :
+"         \ &filetype ==# 'vimshell' ? vimshell#get_status_string() :
+"         \ LightlineTruncatePath(expand('%:p'))
+" endfunction
 
 function! LightlineTruncatePath(fullpath)
   if empty(a:fullpath)
@@ -255,7 +274,7 @@ xnoremap U <Nop>
 nnoremap <C-p> :Files<CR>
 " nnoremap <C-f> :Lines<CR>
 " nnoremap <C-b> :Buffers<CR>
-nnoremap <C-h> :Ag<CR>
+" nnoremap <C-h> :Ag<CR>
 " nnoremap <C-t> :Tags<CR>
 
 let g:fzf_layout = { 'down': '60%' }
@@ -315,8 +334,8 @@ let g:sneak#label = 1
 " Used to searching for words in files fast
 " Need this to ag
 " brew install the_silver_searcher
-nnoremap <C-h> :Ag<CR>
-" nnoremap <C-g> :silent Ag<CR>
+" nnoremap <C-h> :Ag<CR>
+nnoremap <C-g> :silent Ag<CR>
 
 " command! -nargs=+ Ag
 "       \ call fzf#vim#grep(
@@ -325,25 +344,66 @@ nnoremap <C-h> :Ag<CR>
 
 " nnoremap <C-g> :call fzf#vim#grep('ag --vimgrep --no-heading --smart-case '.input('Ag: '), 1, {'options':'--ansi'}, 0)<CR>
 
-"Switched from Ag to Rg
+" Switched from Ag to Rg
 " nnoremap <C-g> :Rg<Space>
 nnoremap <leader>rr :Rg<Space>
 
-
 " vim-commentary
 " gcc
-
 
 " nerdtree
 let NERDTreeShowHidden=1
 map <C-n> :NERDTreeToggle<CR>
 
+" static width
+" let g:NERDTreeWinSize = 40
+
+" dynamic width
+function! s:NERDTreeWidthPct(pct)
+let g:NERDTreeWinSize = float2nr(&columns * a:pct) 
+endfunction
+autocmd VimEnter * call s:NERDTreeWidthPct(0.7) 
+
+" line numbers
+autocmd FileType nerdtree let b:nerdtree_has_number = &number | setlocal nonumber relativenumber
+autocmd BufLeave * if exists("b:nerdtree_has_number") | setlocal number | unlet b:nerdtree_has_number | endif
+
+" Prompt for folder and open NERDTree there
+function! PromptNERDTreeDir()
+    " Prompt user for folder path
+    let l:path = input('NERDTree folder: ', '', 'dir')
+    " Only continue if user typed something
+    if l:path != ''
+        " Change Vim cwd
+        execute 'cd' fnameescape(l:path)
+        " Open NERDTree rooted at that folder
+        execute 'NERDTree' fnameescape(l:path)
+    endif
+endfunction
+
+" Map <leader>e to call the prompt function
+nnoremap <leader>e :call PromptNERDTreeDir()<CR>
+
+" <C-n>      Toggle NERDTree open/close
+" <leader>e  Focus NERDTree on current file (opens if closed)
+" <Enter>    Open file / enter folder
+" v          Open file in vertical split
+" s          Open file in horizontal split
+" t          Open file in new tab
+" k / j      Move cursor up / down
+" u          Go to parent directory
+" C          Change NERDTree root to folder under cursor (updates Vim cwd if enabled)
+" :NERDTreeChDir  Change Vim cwd to selected folder
+" I          Toggle hidden files
+" R          Refresh tree
+" /          Search for a file/node
+" p / P      Jump to sibling / previous node
+" <leader>c  Jump Vim cwd to current file’s folder (:cd %:p:h)
+" x          Collapse current folder
 
 " --------------------------------
 
 " MAPPINGS AND SETTINGS VIM"
-let mapleader = " "
-
 set relativenumber
 set number
 
@@ -358,15 +418,20 @@ nnoremap <C-'> :tabnext<CR>
 nnoremap <Tab> <Nop>
 
 " Buffers (jump list style)
-nnoremap <C-I> <C-I>   " jump forward
-nnoremap <C-O> <C-O>   " jump back
+" jump forward
+nnoremap <C-I> <C-I>
+" jump back
+nnoremap <C-O> <C-O>
+
+" add in C-9 in insert mode to go to back of sentence
+" and also C-0 to go back to front of sentence
 
 " LaTex General/Math
 inoremap ,f \frac{}{}<Left><Left><Left>
 inoremap ,6 ^{}<Left>
-inoremap ,_ _{}<Left>
+inoremap ,- _{}<Left>
 
-inoremap ,s \sum_{}^{}<Left><Left><Left>
+inoremap ,su \sum_{}^{}<Left><Left><Left>
 inoremap ,i \int_{}^{}<Left><Left><Left>
 
 inoremap ,( \left(  \right)<Left><Left><Left>
@@ -378,28 +443,63 @@ inoremap ,eq \begin{equation*}<CR><CR>\end{equation*}<Esc>kA
 inoremap ,ba \begin{array}<CR><CR>\end{array}<Esc>kA
 inoremap ,al \begin{aligned}<CR><CR>\end{aligned}<C-o>k
 inoremap ,tb \textbf{}<Left>
-inoremap <C-a> \textbf{}<Left>
+inoremap <C-a> \textbf{
 inoremap <C-z> {
 inoremap <C-x> }
 inoremap ,ub \underbrace{}_{}<Left><Left><Left><Left>
 inoremap ,ob \overbrace{}^{}<Left><Left><Left><Left>
 
-inoremap ,a \alpha
-inoremap ,b \beta
-inoremap ,g \gamma
-inoremap ,d \delta
-inoremap ,l \lambda
-inoremap ,p \pi
-inoremap ,t \theta
-inoremap ,e \epsilon
+" ----- Lowercase -----
+inoremap ,a  \alpha
+inoremap ,b  \beta
+inoremap ,g  \gamma
+inoremap ,d  \delta
+inoremap ,e  \epsilon
+inoremap ,ve \varepsilon
+inoremap ,z  \zeta
+inoremap ,t  \theta
+inoremap ,i  \iota
+inoremap ,k  \kappa
+inoremap ,l  \lambda
+inoremap ,m  \mu
+inoremap ,n  \nu
+inoremap ,x  \xi
+inoremap ,p  \pi
+inoremap ,r  \rho
+inoremap ,s  \sigma
+inoremap ,ta \tau
+inoremap ,u  \upsilon
+inoremap ,ph \phi
 inoremap ,c \chi
-inoremap ,e \upsilon
+inoremap ,ps \psi
+inoremap ,o  \omega
 
-inoremap ,v \mathbf{}<Left>
-inoremap ,m \mathbb{}<Left>
+" ----- Variants -----
+inoremap ,vf \varphi
+inoremap ,vk \varkappa
+inoremap ,vr \varrho
+inoremap ,vs \varsigma
+
+" ----- Capitals that exist in LaTeX -----
+inoremap ,G \Gamma
+inoremap ,D \Delta
+inoremap ,T \Theta
+inoremap ,L \Lambda
+inoremap ,X \Xi
+inoremap ,P \Pi
+inoremap ,S \Sigma
+inoremap ,U \Upsilon
+inoremap ,F \Phi
+inoremap ,C \Chi
+inoremap ,Y \Psi
+inoremap ,O \Omega
+
+inoremap ,mbv \mathbf{}<Left>
+inoremap ,mbb \mathbb{}<Left>
+inoremap ,mca \mathcal{}<Left>
 
 inoremap ,4 $$<Left>
-inoremap ,\ \[ \]<Left><Left>
+inoremap ,\ \[  \]<Left><Left><Left>
 
 inoremap ,n \sin{}<Left>
 inoremap ,o \cos{}<Left>
@@ -411,10 +511,23 @@ nnoremap ,am F$vf$
 nnoremap ,iM F\[lvf\]h
 nnoremap ,aM F\[vf\]
 
+" maybe delete the % if causing problems
+nnoremap gm F\vf{%
+" do C-backspace to delete in insert mode and normal mode
+" something like 
+" " Normal mode: Ctrl+Backspace acts like d
+" nnoremap <C-H> d
+
+" " Insert mode: Ctrl+Backspace deletes previous word
+" inoremap <C-H> <C-W>
+
 " Clipboard "
 set clipboard=unnamedplus
 " Gets rid of blackhole copying from pasting
 vnoremap p "_dP
+nnoremap x "_x
+nnoremap X "_X
+nnoremap d "_d
 
 " Map Ctrl+s to save the file
 nnoremap <C-s> :w<CR>
@@ -428,6 +541,20 @@ nnoremap <leader>w :w<CR>
 set splitbelow
 set splitright
 set noswapfile
+
+" marks 
+nnoremap <leader>m :marks<CR>
+" ma       Set a mark 'a' at the current cursor position (lowercase = local)
+" mA       Set a mark 'A' at current position (uppercase = global, persists across files)
+
+" 'a       Jump to the line of mark 'a' (local)
+" `a       Jump to the exact cursor position of mark 'a' (line + column)
+" 'A       Jump to global mark 'A' in another file
+" `"       Jump to last exit position (where you left the file)
+
+" ``       Jump to previous cursor position (two backticks)
+" '.       Jump to last edit
+" `^       Jump to last insert position
 
 " terminal splits
 nnoremap <leader>H :leftabove vert term<CR>
@@ -567,7 +694,7 @@ nnoremap <leader>0 :tablast<CR>
 
 " ---------------------------
 " find and replace
-nnoremap <leader>r :%s/
+" nnoremap <leader>r :%s/
 " :%s/foo/bar/g       " g = replace all matches on a line
 " :%s/foo/bar/c       " c = confirm each replacement
 " :%s/foo/bar/gi      " g + i = replace all, ignore case
@@ -676,6 +803,7 @@ nnoremap <leader>q :confirm close<CR>
 
 " v/d/c + iW - highlights strictly word sep by spaces
 
+" viW  - visually select word under cursor lhs space, rhs space
 " viw  - visually select word under cursor
 " vaw  - visually select a word (includes surrounding whitespace)
 " diw  - delete word under cursor; stay in normal mode
