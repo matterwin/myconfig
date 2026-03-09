@@ -36,6 +36,7 @@ Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-commentary'
 Plug 'rking/ag.vim'
 Plug 'farmergreg/vim-lastplace'
+Plug 'google/vim-searchindex'
 
 Plug 'michaeljsmith/vim-indent-object'
 
@@ -155,8 +156,6 @@ nnoremap <leader>a :ALEToggle<CR>
 " nnoremap <C-w> :call ToggleLspDiagnostics()<CR>
 
 " Aesthetics
-set hlsearch
-
 set laststatus=2
 
 set backspace=indent,eol,start
@@ -176,21 +175,39 @@ nnoremap \vv :VimtexView<CR>
 " To compile: latexmk -pdf main.tex or pdflatex main.tex
 " To view pdf: zathura main.pdf & or explorer.exe main.pdf (this is for wsl)
 
+set hlsearch
+set incsearch
+
 " ------------------------------
 " Statusline config (bottom bar and tabs)
 " ------------------------------
 
 let g:lightline = {
-      \ 'colorscheme': 'mytheme',
-      \ 'active': {
-      \   'left': [ ['mode'], ['gitbranch', 'readonly', 'filename', 'modified'] ],
-      \   'right': [ ['lineinfo'], ['percent'], ['filetype'] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'gitbranch#name',
-      \   'filename': 'LightlineFilename'
-      \ },
-      \ }
+    \ 'colorscheme': 'mytheme',
+    \ 'active': {
+    \   'left': [ ['mode'], ['gitbranch', 'readonly', 'filename', 'modified'] ],
+    \   'right': [ ['lineinfo'], ['percent'], ['filetype'], ['searchindex'] ]
+    \ },
+    \ 'component_function': {
+    \   'gitbranch': 'gitbranch#name',
+    \   'filename': 'LightlineFilename',
+    \   'searchindex': 'LightlineSearchIndex'
+    \ },
+    \ }
+
+function! LightlineSearchIndex() abort
+  if !v:hlsearch
+    return ''
+  endif
+
+  " Get [current, total] from vim-searchindex
+  let counts = searchindex#MatchCounts()
+  if empty(counts) || counts[1] == 0
+    return ''
+  endif
+
+  return printf('%d/%d', counts[0], counts[1])
+endfunction
 
 function! LightlineFilename()
     let l:fname = expand('%:t')
@@ -209,9 +226,12 @@ endfunction
 let s:p = {'normal': {}, 'inactive': {}, 'insert': {}, 'replace': {}, 'visual': {}, 'tabline': {}}
 
 " --- Statusline ---
-let s:p.normal.left   = [ ['black', 'white', 15, 238] ]
+let s:p.normal.left   = [ ['black', 'white', 142, 238], ['black', 'white', 15, 238] ]
 let s:p.normal.middle = [ ['black', 'white', 15, 238] ]
 let s:p.normal.right  = [ ['black', 'white', 15, 238] ]
+
+" a way to change other colors for other modes
+" let s:p.visual.left   = [ ['black', 'white', 142, 238], ['black', 'white', 15, 238] ]
 
 let s:p.inactive.left   = [ ['black', 'white', 'black', 238 ] ]
 let s:p.inactive.middle = [ ['black', 'white', 'black', 238 ] ]
@@ -229,10 +249,6 @@ let s:p.tabline.right  = [ ['white', 'grey', 'grey', 'NONE'] ]
 " Apply palette
 let g:lightline#colorscheme#mytheme#palette = lightline#colorscheme#fill(s:p)
 let g:lightline.colorscheme = 'mytheme'
-
-" --- Layout ---
-let g:lightline.active   = {'left': [['mode'], ['filename']], 'right': [['lineinfo'], ['percent']]}
-let g:lightline.inactive = {'left': [['mode'], ['filename']], 'right': [['lineinfo'], ['percent']]}
 
 let g:lightline.tabline_separator = { 'left': '', 'right': '' }
 let g:lightline.tabline_subseparator = { 'left': '', 'right': '' }
@@ -273,8 +289,7 @@ xnoremap U <Nop>
 " Keybinding for fuzzy file search
 nnoremap <C-p> :Files<CR>
 " nnoremap <C-f> :Lines<CR>
-" nnoremap <C-b> :Buffers<CR>
-" nnoremap <C-h> :Ag<CR>
+nnoremap <C-b> :Buffers<CR>
 " nnoremap <C-t> :Tags<CR>
 
 let g:fzf_layout = { 'down': '60%' }
@@ -286,8 +301,8 @@ let g:fzf_layout = { 'down': '60%' }
 
 " vim-tmux-navigator configuration
 let g:tmux_navigator_no_mappings = 1
-nnoremap <C-h> :TmuxNavigateLeft<CR>
 nnoremap <C-j> :TmuxNavigateDown<CR>
+nnoremap <C-h> :TmuxNavigateLeft<CR>
 nnoremap <C-k> :TmuxNavigateUp<CR>
 nnoremap <C-l> :TmuxNavigateRight<CR>
 
@@ -295,8 +310,9 @@ tnoremap <C-h> <C-\><C-n><C-w>h
 tnoremap <C-j> <C-\><C-n><C-w>j
 tnoremap <C-k> <C-\><C-n><C-w>k
 tnoremap <C-l> <C-\><C-n><C-w>l
+tnoremap <Esc> <C-\><C-n>
 
-tnoremap <C-n> <C-\>
+" tnoremap <C-n> <C-\>
 
 " " Normal mode
 " nnoremap <C-M-h> :TmuxNavigateLeft<CR>
@@ -328,6 +344,10 @@ let g:sneak#label = 1
 " S x y -> jump backward to xy
 " use the ; and , just like f and F
 
+" f/t  → tiny movement (single char)
+" s    → medium teleport (2 chars)
+" /    → full search
+
 " keep capslock as fn1 and do esc mode fn1 + w which will be ctrl+w for othernkeyboar
 
 " ag.vim
@@ -335,7 +355,18 @@ let g:sneak#label = 1
 " Need this to ag
 " brew install the_silver_searcher
 " nnoremap <C-h> :Ag<CR>
-nnoremap <C-g> :silent Ag<CR>
+"
+" runs immediately over word
+" nnoremap <C-g> :silent Ag<CR>
+"
+" prompts for pattern in cwd
+" nnoremap <C-g>g :Ag<Space>
+
+function! AgCursorWord()
+    execute 'Ag ' . expand('<cword>')
+endfunction
+
+nnoremap <C-g> :call AgCursorWord()<CR>
 
 " command! -nargs=+ Ag
 "       \ call fzf#vim#grep(
@@ -344,9 +375,8 @@ nnoremap <C-g> :silent Ag<CR>
 
 " nnoremap <C-g> :call fzf#vim#grep('ag --vimgrep --no-heading --smart-case '.input('Ag: '), 1, {'options':'--ansi'}, 0)<CR>
 
-" Switched from Ag to Rg
 " nnoremap <C-g> :Rg<Space>
-nnoremap <leader>rr :Rg<Space>
+" nnoremap <leader>rr :Rg<Space>
 
 " vim-commentary
 " gcc
@@ -427,22 +457,32 @@ nnoremap <C-O> <C-O>
 " and also C-0 to go back to front of sentence
 
 " LaTex General/Math
-inoremap ,f \frac{}{}<Left><Left><Left>
 inoremap ,6 ^{}<Left>
 inoremap ,- _{}<Left>
 
+inoremap ,fr \frac{}{}<Left><Left><Left>
 inoremap ,su \sum_{}^{}<Left><Left><Left>
-inoremap ,i \int_{}^{}<Left><Left><Left>
+inoremap ,in \int_{}^{}<Left><Left><Left><Left>
+inoremap ,bi \binom{}{}<Left><Left><Left>
+inoremap ,ts \times
+inoremap ,ck \check{}<Left>
 
 inoremap ,( \left(  \right)<Left><Left><Left>
+inoremap ,9 \left(  \right)<Left><Left><Left>
 inoremap ,[ \left[  \right]<Left><Left><Left>
 inoremap ,{ \left\{  \right\}<Left><Left><Left>
 
+inoremap ,b( \Big(  \Big)<Left><Left><Left>
+inoremap ,b9 \Big(  \Big)<Left><Left><Left>
+inoremap ,b[ \Big[  \Big]<Left><Left><Left>
+inoremap ,b{ \Big\{  \Big\}<Left><Left><Left>
+
 inoremap ,ss \subsection*{}<Left>
 inoremap ,eq \begin{equation*}<CR><CR>\end{equation*}<Esc>kA
-inoremap ,ba \begin{array}<CR><CR>\end{array}<Esc>kA
+inoremap ,ar \begin{array}<CR><CR>\end{array}<Esc>kA
 inoremap ,al \begin{aligned}<CR><CR>\end{aligned}<C-o>k
 inoremap ,tb \textbf{}<Left>
+inoremap ,fb \fbox{}<Left>
 inoremap <C-a> \textbf{
 inoremap <C-z> {
 inoremap <C-x> }
@@ -494,16 +534,19 @@ inoremap ,C \Chi
 inoremap ,Y \Psi
 inoremap ,O \Omega
 
-inoremap ,mbv \mathbf{}<Left>
-inoremap ,mbb \mathbb{}<Left>
-inoremap ,mca \mathcal{}<Left>
+inoremap ,bv \mathbf{}<Left>
+inoremap ,bb \mathbb{}<Left>
+inoremap ,ca \mathcal{}<Left>
 
 inoremap ,4 $$<Left>
 inoremap ,\ \[  \]<Left><Left><Left>
 
-inoremap ,n \sin{}<Left>
-inoremap ,o \cos{}<Left>
-inoremap ,q \log{}<Left>
+inoremap ,sn \sin{}<Left>
+inoremap ,cs \cos{}<Left>
+inoremap ,lo \log{}<Left>
+inoremap ,as \arcsin{}<Left>
+inoremap ,ac \arccos{}<Left>
+inoremap ,at \arctan{}<Left>
 
 " LaTex math visual
 nnoremap ,im F$lvf$h
@@ -511,8 +554,22 @@ nnoremap ,am F$vf$
 nnoremap ,iM F\[lvf\]h
 nnoremap ,aM F\[vf\]
 
+vnoremap ,im <Esc>F$lvf$h
+vnoremap ,am <Esc>F$vf$
+vnoremap ,iM <Esc>F\[lvf\]h
+vnoremap ,aM <Esc>F\[vf\]
+
 " maybe delete the % if causing problems
-nnoremap gm F\vf{%
+nnoremap ,gm F\vf{%
+nnoremap gm %
+vnoremap ,gm F\vf{%
+vnoremap gm %
+nnoremap M %
+vnoremap M %
+
+" doesnt work cause matchpairs needs asymmetric chars, so not $
+" set matchpairs+=$:$
+
 " do C-backspace to delete in insert mode and normal mode
 " something like 
 " " Normal mode: Ctrl+Backspace acts like d
@@ -578,17 +635,19 @@ tnoremap <C-q> <C-\><C-n>
 vnoremap <C-q> <Esc>
 nnoremap <C-q> <Esc>
 
+" better
+tnoremap <C-q> <Esc><C-\><C-n>
 
 nnoremap <leader>k :topleft split<CR>
 nnoremap <leader>j :botright split<CR>
 nnoremap <leader>h :topleft vsplit<CR>
 nnoremap <leader>l :botright vsplit<CR>
 
-" Resize splits with Ctrl + Shift + Arrows
-nnoremap <C-S-Up>    :resize +2<CR>
-nnoremap <C-S-Down>  :resize -2<CR>
-nnoremap <C-S-Right> :vertical resize -2<CR>
-nnoremap <C-S-Left>  :vertical resize +2<CR>
+" Resize splits with Alt + Shift + Arrows
+nnoremap <M-S-Up>    :resize +2<CR>
+nnoremap <M-S-Down>  :resize -2<CR>
+nnoremap <M-S-Right> :vertical resize -2<CR>
+nnoremap <M-S-Left>  :vertical resize +2<CR>
 
 " Tabs "
 filetype on
@@ -694,7 +753,7 @@ nnoremap <leader>0 :tablast<CR>
 
 " ---------------------------
 " find and replace
-" nnoremap <leader>r :%s/
+nnoremap <leader>r :%s/
 " :%s/foo/bar/g       " g = replace all matches on a line
 " :%s/foo/bar/c       " c = confirm each replacement
 " :%s/foo/bar/gi      " g + i = replace all, ignore case
@@ -717,6 +776,7 @@ let g:ftplugin_sql_omni_key = '<C-j>'
 
 set ttimeoutlen=0
 set timeoutlen=300 " default is 1000 ms 
+set notimeout
 
 " disable recording
 nnoremap q <Nop>
@@ -877,4 +937,17 @@ nnoremap <leader>q :confirm close<CR>
 
 " d + number + hjkl -> deletes number rows
 " d + hjkl -> deletes whatever hjkl from cursor 
+
+" maybe in the future make my own plugin for jumps back n forth !!!
+" nnoremap <leader>y :call JumpLatexEnv()<CR>
+" function! JumpLatexEnv()
+"   let l:line = getline('.')
+"   if l:line =~ '\\begin{'
+"     let l:env = matchstr(l:line, '\\begin{\zs[^}]*')
+"     execute 'normal! /\\end{' . l:env . '}<CR>'
+"   elseif l:line =~ '\\end{'
+"     let l:env = matchstr(l:line, '\\end{\zs[^}]*')
+"     execute 'normal! ?\\begin{' . l:env . '}<CR>'
+"   endif
+" endfunction
 

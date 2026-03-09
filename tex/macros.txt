@@ -1,4 +1,9 @@
 % ---- Macros ----
+\newcommand{\myhrule}[1]{%
+  \vspace{#1}%
+  \noindent\hrule
+  \vspace{#1}%
+}
 \makeatletter
 \newcommand{\bern}{%
   \begin{enumerate}%
