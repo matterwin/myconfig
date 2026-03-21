@@ -1,0 +1,5 @@
+# to reload
+# bind -f ~/.inputrc
+
+# set show-mode-in-prompt on
+"\C-q": vi-movement-mode

@@ -1,10 +1,10 @@
-/*style_11*/
+/*style_100*/
 
 * {
     border: none;
     border-radius: 0;
     font-family: "Font Awesome 5 Free", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     min-height: 0;
 }
 
@@ -149,7 +149,9 @@ tooltip {
     border-bottom-color: #fbf1c7; 
 }
 
-#pulseaudio-slider slider {}
+#pulseaudio-slider slider {
+    background: none;
+}
 
 #pulseaudio-slider{
     margin: 4px;
@@ -198,5 +200,6 @@ tooltip {
     border-bottom-color: #fbf1c7; 
     color: #fbf1c7; 
 }
+
 
 

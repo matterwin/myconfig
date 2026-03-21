@@ -31,7 +31,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'preservim/nerdtree'
+" Plug 'preservim/nerdtree'
 Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-commentary'
 Plug 'rking/ag.vim'
@@ -114,11 +114,42 @@ if executable('pylsp')
         \ })
 endif
 
+if executable('gopls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'gopls',
+        \ 'cmd': ['gopls'],
+        \ 'whitelist': ['go'],
+    \ })
+endif
+
+if executable('typescript-language-server')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'tsserver',
+        \ 'cmd': ['typescript-language-server', '--stdio'],
+        \ 'whitelist': ['javascript', 'typescript'],
+    \ })
+endif
+
+if executable('jdtls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'jdtls',
+        \ 'cmd': ['jdtls'],
+        \ 'whitelist': ['java'],
+    \ })
+endif
+
+" :echo executable('rust-analyzer')
+" :echo executable('clangd')
+" :echo executable('pylsp')
+" :echo executable('gopls')
+" :echo executable('typescript-language-server')
+" :echo executable('jdtls')
+
 " Keybindings for LSP features
 nnoremap gd :LspDefinition<CR>
 nnoremap gD :LspDeclaration<CR>
 nnoremap gi <plug>(lsp-implementation)
-" nnoremap K :LspHover<CR>
+nnoremap K :LspHover<CR>
 nnoremap gr :LspReferences<CR>
 " nnoremap <leader>rn :LspRename<CR>
 " nnoremap <leader>e :LspDiagnostic<CR>
@@ -131,29 +162,59 @@ let g:lsp_signs_enabled = 0
 set signcolumn=no
 set foldcolumn=0
 
-function! ToggleLspDiagnostics()
-  if g:lsp_signs_enabled
-    " Hide signs
-    let g:lsp_signs_enabled = 0
-    set signcolumn=no
-    echom "LSP Diagnostics UI OFF"
-    " Clear signs but keep diagnostics running
-    silent! execute('sign unplace * group=lsp')
+" function! ToggleLspDiagnostics()
+"   if g:lsp_signs_enabled
+"     " Turn off signs and diagnostics
+"     let g:lsp_diagnostics_enabled = 0
+"     let g:lsp_signs_enabled = 0
+"     set signcolumn=no
+"     set foldcolumn=0
+"     echom "LSP Diagnostics OFF"
+"     silent! execute('sign unplace * group=lsp')
+"   else
+"     " Turn on signs and diagnostics
+"     let g:lsp_diagnostics_enabled = 1
+"     let g:lsp_signs_enabled = 1
+"     set signcolumn=yes
+"     set foldcolumn=1
+"     echom "LSP Diagnostics ON"
+"     " Refresh signs so you see current errors/warnings
+"     silent! call lsp#diagnostics#refresh()
+"   endif
+" endfunction
+" nnoremap <leader>ld :call ToggleLspDiagnostics()<CR>
+
+" let g:ale_linters_explicit = 1
+let g:ale_enabled = 0
+let g:ale_linters = {}
+set signcolumn=yes
+
+function! ToggleALEWithSigns()
+  if g:ale_enabled
+    let g:ale_enabled = 0
+    let g:ale_linters_explicit = 1
+    let g:ale_linters = {}
+    call ale#engine#CleanupEveryBuffer()
+    call ale#highlight#UpdateHighlights()
+    for buf in range(1, bufnr('$'))
+        if bufloaded(buf)
+            call ale#virtualtext#Clear(buf)
+        endif
+    endfor
+    silent! execute('sign unplace * group=ale')
+    echom "ALE: Disabled"
   else
-    " Show signs
-    let g:lsp_signs_enabled = 1
-    set signcolumn=yes
-    echom "LSP Diagnostics UI ON"
-    " Refresh diagnostics UI (signs)
-    silent! call lsp#diagnostics#refresh()
+    let g:ale_enabled = 1
+    let g:ale_linters_explicit = 0
+    silent! ALELint
+    echom "ALE: Enabled"
   endif
 endfunction
 
+nnoremap <leader>a :call ToggleALEWithSigns()<CR>
 
-let g:ale_enabled = 0
-let b:ale_fixers = ['prettier', 'eslint']
-nnoremap <leader>a :ALEToggle<CR>
-" nnoremap <C-w> :call ToggleLspDiagnostics()<CR>
+let g:ale_sign_error = 'E'
+let g:ale_sign_warning = 'W'
 
 " Aesthetics
 set laststatus=2
@@ -185,7 +246,7 @@ set incsearch
 let g:lightline = {
     \ 'colorscheme': 'mytheme',
     \ 'active': {
-    \   'left': [ ['mode'], ['gitbranch', 'readonly', 'filename', 'modified'] ],
+    \   'left': [['filename', 'gitbranch', 'readonly'] ],
     \   'right': [ ['lineinfo'], ['percent'], ['filetype'], ['searchindex'] ]
     \ },
     \ 'component_function': {
@@ -226,7 +287,7 @@ endfunction
 let s:p = {'normal': {}, 'inactive': {}, 'insert': {}, 'replace': {}, 'visual': {}, 'tabline': {}}
 
 " --- Statusline ---
-let s:p.normal.left   = [ ['black', 'white', 142, 238], ['black', 'white', 15, 238] ]
+let s:p.normal.left   = [ ['black', 'white', 15, 238], ['black', 'white', 15, 238] ]
 let s:p.normal.middle = [ ['black', 'white', 15, 238] ]
 let s:p.normal.right  = [ ['black', 'white', 15, 238] ]
 
@@ -252,6 +313,9 @@ let g:lightline.colorscheme = 'mytheme'
 
 let g:lightline.tabline_separator = { 'left': '', 'right': '' }
 let g:lightline.tabline_subseparator = { 'left': '', 'right': '' }
+
+let g:lightline.separator = { 'left': '', 'right': '' }
+let g:lightline.subseparator = { 'left': '', 'right': '' }
 
 " Always show tabline
 set showtabline=2
@@ -339,10 +403,13 @@ tnoremap <Esc> <C-\><C-n>
 " tnoremap <C-M-l> <C-\><C-n>:TmuxNavigateRight<CR>
 
 " vim-sneak
-let g:sneak#label = 1
-" s x y -> jump forward to the 2-character sequence xy
+let g:sneak#s_next = 1
+
+xmap s <Plug>Sneak_s
+xmap S <Plug>Sneak_S
+map f <Plug>Sneak_f
+map F <Plug>Sneak_F
 " S x y -> jump backward to xy
-" use the ; and , just like f and F
 
 " f/t  → tiny movement (single char)
 " s    → medium teleport (2 chars)
@@ -412,7 +479,7 @@ function! PromptNERDTreeDir()
 endfunction
 
 " Map <leader>e to call the prompt function
-nnoremap <leader>e :call PromptNERDTreeDir()<CR>
+" nnoremap <leader>e :call PromptNERDTreeDir()<CR>
 
 " <C-n>      Toggle NERDTree open/close
 " <leader>e  Focus NERDTree on current file (opens if closed)
@@ -456,7 +523,7 @@ nnoremap <C-O> <C-O>
 " add in C-9 in insert mode to go to back of sentence
 " and also C-0 to go back to front of sentence
 
-" LaTex General/Math
+" " LaTex General/Math
 inoremap ,6 ^{}<Left>
 inoremap ,- _{}<Left>
 
@@ -466,21 +533,25 @@ inoremap ,in \int_{}^{}<Left><Left><Left><Left>
 inoremap ,bi \binom{}{}<Left><Left><Left>
 inoremap ,ts \times
 inoremap ,ck \check{}<Left>
+inoremap ,wh \widehat
+"do a keybind for \tilde
 
-inoremap ,( \left(  \right)<Left><Left><Left>
-inoremap ,9 \left(  \right)<Left><Left><Left>
-inoremap ,[ \left[  \right]<Left><Left><Left>
-inoremap ,{ \left\{  \right\}<Left><Left><Left>
+inoremap ,( \left(  \right)<Left><Left><Left><Left><Left><Left>
+inoremap ,9 \left(  \right)<Left><Left><Left><Left><Left><Left><Left><Left>
+inoremap ,[ \left[  \right<Left><Left><Left><Left><Left><Left><Left><Left>
+inoremap ,{ \left\{  \right\}<Left><Left><Left><Left><Left><Left><Left><Left>
+" :nnoremap <Enter> o<Esc>
 
 inoremap ,b( \Big(  \Big)<Left><Left><Left>
 inoremap ,b9 \Big(  \Big)<Left><Left><Left>
 inoremap ,b[ \Big[  \Big]<Left><Left><Left>
 inoremap ,b{ \Big\{  \Big\}<Left><Left><Left>
-
 inoremap ,ss \subsection*{}<Left>
+
+inoremap ,bv \begin{verbatim}<CR><CR>\end{verbatim}<Esc>kA
 inoremap ,eq \begin{equation*}<CR><CR>\end{equation*}<Esc>kA
 inoremap ,ar \begin{array}<CR><CR>\end{array}<Esc>kA
-inoremap ,al \begin{aligned}<CR><CR>\end{aligned}<C-o>k
+inoremap ,al \begin{align*}<CR><CR>\end{align*}<C-o>k
 inoremap ,tb \textbf{}<Left>
 inoremap ,fb \fbox{}<Left>
 inoremap <C-a> \textbf{
@@ -488,6 +559,8 @@ inoremap <C-z> {
 inoremap <C-x> }
 inoremap ,ub \underbrace{}_{}<Left><Left><Left><Left>
 inoremap ,ob \overbrace{}^{}<Left><Left><Left><Left>
+inoremap ,pa \partial
+inoremap ,vp \vspace{}<Left>
 
 " ----- Lowercase -----
 inoremap ,a  \alpha
@@ -534,12 +607,15 @@ inoremap ,C \Chi
 inoremap ,Y \Psi
 inoremap ,O \Omega
 
-inoremap ,bv \mathbf{}<Left>
+inoremap ,nb \nabla
+
+inoremap ,bf \mathbf{}<Left>
 inoremap ,bb \mathbb{}<Left>
 inoremap ,ca \mathcal{}<Left>
 
 inoremap ,4 $$<Left>
-inoremap ,\ \[  \]<Left><Left><Left>
+" inoremap ,\ \[  \]<Left><Left><Left>
+inoremap ,\ \[<CR>\]<Esc>O
 
 inoremap ,sn \sin{}<Left>
 inoremap ,cs \cos{}<Left>
@@ -561,11 +637,9 @@ vnoremap ,aM <Esc>F\[vf\]
 
 " maybe delete the % if causing problems
 nnoremap ,gm F\vf{%
-nnoremap gm %
 vnoremap ,gm F\vf{%
+nnoremap gm %
 vnoremap gm %
-nnoremap M %
-vnoremap M %
 
 " doesnt work cause matchpairs needs asymmetric chars, so not $
 " set matchpairs+=$:$
@@ -588,7 +662,6 @@ nnoremap d "_d
 
 " Map Ctrl+s to save the file
 nnoremap <C-s> :w<CR>
-nnoremap ` :w<CR>
 nnoremap <leader>w :w<CR>
 
 " Highlights "
@@ -601,6 +674,25 @@ set noswapfile
 
 " marks 
 nnoremap <leader>m :marks<CR>
+" jump to line mark
+nnoremap '' `
+" jump to line + col mark
+nnoremap ' '
+
+nnoremap m :call SetMark()<CR>
+
+function! SetMark()
+  let c = nr2char(getchar())
+  execute 'normal! m' . c
+
+  " Get position of the mark
+  let pos = getpos("'" . c)
+  let lnum = pos[1]
+  let col  = pos[2]
+
+  echom printf("mark '%s set: l_%d, c_%d", c, lnum, col)
+endfunction
+
 " ma       Set a mark 'a' at the current cursor position (lowercase = local)
 " mA       Set a mark 'A' at current position (uppercase = global, persists across files)
 
@@ -618,6 +710,12 @@ nnoremap <leader>H :leftabove vert term<CR>
 nnoremap <leader>L :rightbelow vert term<CR>
 nnoremap <leader>J :belowright term<CR>
 nnoremap <leader>K :aboveleft term<CR>
+
+" Open terminal splits using Shift + H/J/K/L (rather do something else)
+" nnoremap <C-S-H> :leftabove vert term<CR>
+" nnoremap <C-S-L> :rightbelow vert term<CR>
+" nnoremap <C-S-J> :belowright term<CR>
+" nnoremap <C-S-K> :aboveleft term<CR>
 
 inoremap <C-h> <Left>
 inoremap <C-j> <Down>
@@ -649,6 +747,11 @@ nnoremap <M-S-Down>  :resize -2<CR>
 nnoremap <M-S-Right> :vertical resize -2<CR>
 nnoremap <M-S-Left>  :vertical resize +2<CR>
 
+nnoremap <M-S-H> :vertical resize -2<CR>
+nnoremap <M-S-L> :vertical resize +2<CR>
+nnoremap <M-S-K> :resize +2<CR>
+nnoremap <M-S-J> :resize -2<CR>
+
 " Tabs "
 filetype on
 filetype plugin indent on
@@ -672,6 +775,9 @@ vnoremap <S-l> >gv
 nnoremap 9 $
 vnoremap 9 $
 
+" nnoremap H ^
+" nnoremap L $
+
 nnoremap D "_D
 nnoremap dd "_dd
 vnoremap d "_d
@@ -689,6 +795,34 @@ set cursorline
 " colorscheme catppuccin
 
 syntax enable
+
+" Correct :Grep command that runs silently and opens quickfix
+command! -nargs=+ Grep execute 'silent! grep! <q-args>' | execute 'copen'
+
+nnoremap <leader>uv :e $MYVIMRC<CR>
+nnoremap <leader>uV :source $MYVIMRC<CR>
+nnoremap <leader>e :new<CR>:Ex<CR>
+autocmd FileType netrw nnoremap <buffer> <C-h> <C-w>h
+autocmd FileType netrw nnoremap <buffer> <C-j> <C-w>j
+autocmd FileType netrw nnoremap <buffer> <C-k> <C-w>k
+autocmd FileType netrw nnoremap <buffer> <C-l> <C-w>l
+autocmd FileType netrw setlocal number relativenumber
+
+nnoremap c; q:
+
+cnoremap <C-q> <Esc>
+
+" generate ctags based on pwd
+noremap <leader>ct :!ctags -R .<CR>
+nnoremap <leader>x :copen<CR>
+nnoremap <leader>ff :find 
+nnoremap <leader>fg :Grep 
+nnoremap <leader>cd :cd 
+
+" ------- COLORSCHEME
+
+" built into vim
+" colorscheme retrobox
 
 " Dark mode -- Gruvbox
 set background=dark
@@ -708,6 +842,8 @@ colorscheme gruvbox
 " Optional overrides after loading the scheme
 autocmd ColorScheme gruvbox hi Comment ctermfg=grey
 
+highlight SignColumn guibg=NONE ctermbg=NONE
+
 " syntax on
 " colorscheme monokai
 
@@ -718,6 +854,9 @@ autocmd ColorScheme gruvbox hi Comment ctermfg=grey
 
 set mouse=a
 " set ttymouse=
+
+" Disable Ctrl+S in insert mode completely
+" iunmap <C-s>
 
 " Yggdroot/indentLine
 let g:indentLine_enabled        = 0      " enable indent lines
@@ -739,17 +878,6 @@ nnoremap <leader>7 7gt
 nnoremap <leader>8 8gt
 nnoremap <leader>9 9gt
 nnoremap <leader>0 :tablast<CR>
-
-" nnoremap 1 1gt
-" nnoremap 2 2gt
-" nnoremap 3 3gt
-" nnoremap 4 4gt
-" nnoremap 5 5gt
-" nnoremap 6 6gt
-" nnoremap 7 7gt
-" nnoremap 8 8gt
-" nnoremap 9 9gt
-" nnoremap 0 :tablast<CR>
 
 " ---------------------------
 " find and replace

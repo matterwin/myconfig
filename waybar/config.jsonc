@@ -11,11 +11,12 @@
 {
     "layer": "top",
     "position": "bottom",
-    "height": 38,
+    "height": 10,
     "spacing": 2,
     "margin-top": 0,
     "margin-bottom": 0,
     "reload_style_on_change": true,
+    "exclusive": false, // pushes up applications to make room
 
     /////////////////////////////////////////////
     //                                         //
@@ -25,7 +26,14 @@
 
     "modules-left": ["custom/launcher", "custom/terminal", "custom/file_explorer", "custom/chrome", "custom/discord", "custom/music", "custom/krita"],
     "modules-center": ["wlr/taskbar", "hyprland/workspaces"],
-    "modules-right": ["group/group-tools", "pulseaudio/slider", "pulseaudio", "custom/bluetooth", "clock", "group/group-power"],
+    "modules-right": ["group/group-tools", "pulseaudio/slider", "pulseaudio", "custom/bluetooth", "battery", "clock", "group/group-power"],
+
+    // delete this shit later
+      // "custom/calendar": {
+    // "format": "yo",
+    // "on-click": "lvsk-calendar-launcher",
+    // "tooltip-format": "Click to open calendar"
+  // },
 
     ///////////////////////////////////
     //                               //
@@ -59,7 +67,7 @@
 
     "clock":
     {
-        "tooltip-format": "<big>{:%M %D %Y}</big>\n{calendar}",
+        "tooltip-format": "<big>{:%B %d, %Y}</big>\n<tt>{calendar}</tt>",
         "format-alt": "{:%m-%d-%Y}",
         "format": "{:%I:%M %p}"
     },
@@ -218,10 +226,10 @@
     },
 
     "custom/krita": {
-        "format": "🖌️",
+        "format": "🖊",
         "tooltip": true,
-        "tooltip-format": "Krita",
-        "on-click": "Krita"
+        "tooltip-format": "krita",
+        "on-click": "/usr/bin/krita"
     },
 
     "custom/file_explorer":

@@ -9,6 +9,9 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 
+stty -ixon
+set -o vi
+
 # fastfetch
 
 PS1='\[\e[38;2;191;85;236m\]\w\[\e[0m\]>> '
@@ -34,3 +37,9 @@ unset __conda_setup
 export PATH=/opt/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/opt/cuda/lib64:$LD_LIBRARY_PATH
 
+# export PATH=~/Downloads/NsightSystems-linux-public-2019.3.6.30-e2e891f/Target-x86_64/x86_64:$PATH
+# export PATH=~/Downloads/NsightSystems-linux-public-2019.3.6.30-e2e891f/Target-x86_64/x86_64:$PATH
+
+export PATH=/opt/nvidia/nsight-systems/2020.5.1/target-linux-x64:$PATH
+
+export PATH="$HOME/.local/bin:$PATH"
